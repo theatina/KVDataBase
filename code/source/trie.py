@@ -1,0 +1,3 @@
+class Trie_structure():
+
+    
