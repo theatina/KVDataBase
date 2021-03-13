@@ -4,7 +4,7 @@ LT1200012
 
 
 NOTES
-1.
+1. Sorted list in each level
 
 
 REFERENCES

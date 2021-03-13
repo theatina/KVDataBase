@@ -9,6 +9,7 @@ LT1200012
 
 '''
 
+import kvServer_funs as kvsf
 import trie as tr
 import argparse
 
@@ -33,7 +34,7 @@ print(args)
 '''
 # temp_list = ["theatina", "doyouevenexist", "no", "piano"]
 
-temp = ["bear", "bell", "bid", "bull", "buy", "sell", "stock", "stop", "9", "theatina"]
+temp = ["abchsdf", "lalal", "sham", "shame", "wax", "bear", "bell", "bid", "bull", "buy", "sell", "stock", "stop", "theatina"]
 
 trie_dictionary = tr.trie_node(".")
 
@@ -43,7 +44,8 @@ for word in temp:
     tr.trie_insert_key(trie_dictionary,word,value,top_level_key)
 
 for i,word in enumerate(temp):
-    if tr.trie_find_key(trie_dictionary,word) == True:
+    if_found,sth = tr.trie_find_key(trie_dictionary,word)
+    if if_found == True :
         found = "Found"
     else:
         found = "Not found"

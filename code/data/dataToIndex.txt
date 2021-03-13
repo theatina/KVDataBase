@@ -1,0 +1,6 @@
+"Mary" : { "name" : "John" ; "age" : 22 }
+"John" : { "name" : "Mary" ; "address" : { "street" : "Panepistimiou" ; "number" : 12 } } 
+"Tina" : { "height" : 1.75 ; "profession" : "student" }
+"Lark" : { "height" : 1.90 ; "profession" : "administration stuff" }
+"Moby" : { "height" : 1.60 ; "profession" : "professor" }
+"Dennis" : { "height" : 1.80 ; "address" : { "street" : "Kifisias" ; "number" : 42 } } 
