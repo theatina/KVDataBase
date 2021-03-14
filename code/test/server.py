@@ -25,7 +25,7 @@ PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
 server_filename = "serverFile.txt"
 server_file_path = os.path.join(data_filepath,server_filename)
 
-ip_ports_file_lines = open(server_file_path,"r",encoding="utf-8").read().split("\n")[:2]
+ip_ports_file_lines = open(server_file_path,"r",encoding="utf-8").read().split("\n")
 id_ip_port_list = [ (id_num+1,line.split(" ")) for id_num,line in enumerate(ip_ports_file_lines)]
 
 server_list = []
@@ -54,6 +54,16 @@ for th in threads:
     th.start()
     th.join(0.1)
     threads_exited = True
+
+for i,server in enumerate(server_list):
+    if threads[i].is_alive:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((server.ip, server.port))
+            s.sendall(b'exit, world')
+            data = s.recv(1024)
+            data_str = data.decode()
+
+        print(f"Received {data_str} ")
 
 # if threads_exited:
 #     for server in server_list:
