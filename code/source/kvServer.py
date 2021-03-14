@@ -36,7 +36,7 @@ print(args)
 
 temp = ["abchsdf", "lalal", "sham", "shame", "wax", "bear", "bell", "bid", "bull", "buy", "sell", "stock", "stop", "theatina"]
 
-trie_dictionary = tr.trie_node(".")
+trie_dictionary = tr.Trie_Node(".")
 
 value = None
 top_level_key = False
