@@ -16,14 +16,17 @@ def input_check(args):
         if not os.path.exists(args.k):
             raise UsrInputError(f"\nERROR: Path '{args.k}' does not exist!!\n") 
         if args.n < 1:
-            raise UsrInputError(f"\nERROR: Lines must be > 1 ( '{args.n}' value was given )\n")
-        if args.d < 1:
-            raise UsrInputError(f"\nERROR: Max nesting level must be > 1 ( '{args.d}' value was given )\n")
+            raise UsrInputError(f"\nERROR: Lines must be > 0 ( '{args.n}' value was given )\n")
+        if args.d < 0:
+            raise UsrInputError(f"\nERROR: Max nesting level must be > 0 ( '{args.d}' value was given )\n")
+        if args.m < 1:
+            raise UsrInputError(f"\nERROR: Max number of keys must be > 0 ( '{args.m}' value was given )\n")
+        if args.l < 1:
+            raise UsrInputError(f"\nERROR: Max string length must be > 0 ( '{args.l}' value was given )\n")
 
     except UsrInputError as err:
         print(err.args[0])
         exit()
-
 
 
 max_nesting,max_keys_each_level,max_str_len=0,0,0
@@ -79,7 +82,6 @@ def save_names(filepath):
     # print(name_list)
 
 def rand_str_generator():
-
     word_len = random.randint(1,max_str_len)
     r_str = ''.join(random.choices(string.ascii_lowercase, k = word_len)) 
     print(r_str)
@@ -97,6 +99,7 @@ def create_value(key):
             val = random.randint(1,200)
         elif get_key_type == "float":
             val = random.random()
+            val = round(val,2)
         elif get_key_type == "string":
             if "name" in key:
                 name_id = random.randint(0,len(name_list))
@@ -104,8 +107,8 @@ def create_value(key):
             else:
                 val = rand_str_generator()
 
-
     return val
+
 
 global nesting_level
 def value_creation(key,nesting_round):
@@ -118,7 +121,6 @@ def value_creation(key,nesting_round):
         for k in keys:
             nesting_level-=1
             diction[key] = value_creation(key,nesting_level)
-
 
 
 
