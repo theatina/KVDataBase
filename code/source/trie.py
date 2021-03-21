@@ -77,6 +77,10 @@ def trie_insert_key(trie_dictionary, key, value, top_level_key):
             
     curr_node.end_of_word = True
     
+def data_indexing_from_file(trie_dict,filepath):
+    lines = open(filepath,"r",encoding="utf-8").read().split("\n")
+
+
 
 def trie_find_key(trie_dictionary,key):
     word_found = False
@@ -101,6 +105,7 @@ def trie_find_key(trie_dictionary,key):
         value = curr_node.value
     
     return word_found, value
+
 
 
 def trie_print_words(trie_dictionary):

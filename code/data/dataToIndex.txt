@@ -1,10 +1,10 @@
-"key1" : {'height': {'weight': {'height': {} ; 'age': {} ; 'postal_code': {} ; 'profession': 'ev'} ; 'postal_code': {} ; 'name': 'Tabbetha' ; 'street': 'lrxgubk'} ; 'level': 74 ; 'profession': {}}
-"key2" : {'weight': {'city': {'country': {'weight': 0.36 ; 'pet_name': 'Breah' ; 'profession': {}}} ; 'pet_name': {} ; 'profession': {}} ; 'street_number': {} ; 'street': {}}
-"key3" : {'weight': {'height': 0.86} ; 'street_number': {} ; 'name': {}}
-"key4" : {'city': {'weight': {'name': 'Chelsea' ; 'country': {} ; 'profession': 'hediorxc'}}}
-"key5" : {'pet_name': {'postal_code': {} ; 'level': {}}}
-"key6" : {'pet_name': {'age': {'postal_code': {'street': {}} ; 'profession': {}}} ; 'profession': 'u'}
-"key7" : {'street_number': {'profession': {'height': {'street': 'ccyhnhzf'}}} ; 'postal_code': 150 ; 'country': {}}
-"key8" : {'height': {'height': {'postal_code': {'age': {}}} ; 'age': 91 ; 'level': {} ; 'country': 'ct'} ; 'level': 145 ; 'street': {}}
-"key9" : {'weight': {'name': {'postal_code': {} ; 'level': 57 ; 'street': {}}} ; 'name': 'Yamaris'}
-"key10" : {'weight': {'age': 178 ; 'postal_code': 75 ; 'level': {}} ; 'level': {}}
+"key1" : { "age" : { "weight" : { } ; "country" : "kagavvitk" } ; "street" : { } }
+"key2" : { "level" : { "age" : { } ; "pet_name" : "Kamisha" } ; "profession" : { } }
+"key3" : { "pet_name" : { "postal_code" : 126 } }
+"key4" : { "city" : { "height" : { } ; "name" : { } } ; "pet_name" : { } }
+"key5" : { "age" : { "name" : { } } ; "postal_code" : 89 }
+"key6" : { "weight" : { "country" : { } } ; "profession" : "etjdkwe" }
+"key7" : { "weight" : { "street_number" : 59 } }
+"key8" : { "profession" : { "level" : { } ; "city" : { } } }
+"key9" : { "age" : { "age" : 20 } ; "postal_code" : { } }
+"key10" : { "postal_code" : { "pet_name" : "Sarita" } }
