@@ -16,9 +16,6 @@ import argparse
 data_filepath = "../data/"
 
 # Command: kvServer -a ip_address -p port
-
-
-# The programme can be run as " python ./final_project_test --source <dataset_source_folder_path> " or as " python ./final_project_test ", where the default path of the dataset folder is " ./test_data_901_final_project/ "
 parser = argparse.ArgumentParser()
 parser.add_argument("-a", type=str, default=" ")
 parser.add_argument("-p", type=int, default=" ")

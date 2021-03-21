@@ -1,6 +1,10 @@
-"Mary" : { "name" : "John" ; "age" : 22 }
-"John" : { "name" : "Mary" ; "address" : { "street" : "Panepistimiou" ; "number" : 12 } } 
-"Tina" : { "height" : 1.75 ; "profession" : "student" }
-"Lark" : { "height" : 1.90 ; "profession" : "administration stuff" }
-"Moby" : { "height" : 1.60 ; "profession" : "professor" }
-"Dennis" : { "height" : 1.80 ; "address" : { "street" : "Kifisias" ; "number" : 42 } } 
+"key1" : {'level': 117, 'name': 'Spiros', 'profession': {}}
+"key2" : {'height': {}, 'country': 'lzswkbu'}
+"key3" : {'city': 'hbk'}
+"key4" : {'street': {}, 'country': {}}
+"key5" : {'age': 88, 'name': 'Wilhemina', 'profession': 'fwpfs'}
+"key6" : {'weight': {}, 'street': 'j'}
+"key7" : {'city': 'bwjqytk', 'pet_name': 'Regine'}
+"key8" : {'profession': 'gf'}
+"key9" : {'street_number': {}}
+"key10" : {'weight': 0.7424175853995842, 'street_number': {}, 'city': 'anlhyjn'}
