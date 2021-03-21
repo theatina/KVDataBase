@@ -12,17 +12,35 @@ LT1200012
 import kvServer_funs as kvsf
 import trie as tr
 import argparse
+import socket
+
 
 data_filepath = "../data/"
 
 # Command: kvServer -a ip_address -p port
 parser = argparse.ArgumentParser()
-parser.add_argument("-a", type=str, default=" ")
-parser.add_argument("-p", type=int, default=" ")
+parser.add_argument("-a", type=str, default="127.0.0.1")
+parser.add_argument("-p", type=int, default=65430)
 args = parser.parse_args()
 
 print(args)
+ip = args.a
+port = args.p
 
+HOST = ip           # Standard loopback interface address (localhost)
+PORT = port         # Port to listen on (non-privileged ports are > 1023)
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind((HOST, PORT))
+    s.listen()
+    conn, addr = s.accept()
+    with conn:
+        print('Connected by', addr)
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+            conn.sendall(data)
 
 
 

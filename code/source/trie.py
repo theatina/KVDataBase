@@ -79,7 +79,7 @@ def trie_insert_key(trie_dictionary, key, value, top_level_key):
     
 def data_indexing_from_file(trie_dict,filepath):
     lines = open(filepath,"r",encoding="utf-8").read().split("\n")
-
+    
 
 
 def trie_find_key(trie_dictionary,key):

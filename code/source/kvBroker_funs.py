@@ -7,6 +7,7 @@ from datetime import datetime
 import numpy as np
 import string
 import os
+from subprocess import call
 
 class UsrInputError(Exception):
     pass
@@ -41,3 +42,16 @@ def arg_parsing(serverFile_path,dataToIndex_path):
 
 def read_file(filepath):
     return open(filepath,"r",encoding="utf-8").read().split("\n")
+
+def thread_fun(ip,port):
+    call(["python3", "kvServer.py", "-a", ip, "-p", port])
+
+def server_connection(serverFile_path):
+    servers = open(serverFile_path,"r",encoding="utf-8").read().split("\n")
+    server_ip_port = [ (ip_port.split(" ")[0],ip_port.split(" ")[1]) for ip_port in servers]
+    print(server_ip_port)
+    # kvServer -a ip_address -p port
+
+    for ip,port in server_ip_port:
+        thread_fun(ip,port)
+
