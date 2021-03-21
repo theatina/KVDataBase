@@ -1,3 +1,4 @@
+import re 
 import argparse
 import itertools
 import random
@@ -110,41 +111,42 @@ def create_value(key):
     return val
 
 
-global nesting_level
-def value_creation(key,nesting_round):
+global key_nesting
+def value_level(keys,level):
+    global key_nesting
 
-    diction = {}
-    if nesting_round==0:
-        return create_value(key)
-    else:
-        keys = level_keys()
-        for k in keys:
-            nesting_level-=1
-            diction[key] = value_creation(key,nesting_level)
+    temp_d = {}
+    for key in keys:
+        if key_nesting==0:
+            temp_d[key] = create_value(key)
+        else: 
+            key_nesting = random.randint(0,max_nesting-level)
+            keys = level_keys()
+            # print(f"nesting: {key_nesting}")
+            temp_d[key]=value_level(keys,level+1)
 
-
-
-    return diction
+    return temp_d
 
 
 def data_row_creation(line_num):
-    
+    global level_max_nesting
+    global key_nesting
+
     value = {}
     top_level_key = "key"
     data_row = "\""+top_level_key+str(line_num+1)+"\" : "#+str(value)+"\n"  
 
     level_0_keys = level_keys()
-    if max_nesting:
-        level_0_key_nesting = list(np.random.randint(low = 0,high=max_nesting,size=len(level_0_keys)))
-        # print(level_0_key_nesting)
-    else:
-        level_0_key_nesting = [0 for i in range(len(level_0_keys))]
-    
-    for i,key in enumerate(level_0_keys):
-        nesting_round = level_0_key_nesting[i]
-        temp_value = value_creation(key,nesting_round)
-        print(temp_value)
-        value[key]=temp_value
+    # for i,key in enumerate(level_0_keys):
+    # level_0_key_nesting = random.randint(0,max_nesting)
+    level_max_nesting = max_nesting
+    depth=0
+    key_nesting=max_nesting
+    value = value_level(level_0_keys,depth)
+    print(value)
+    # value[key]=temp_value
      
     data_row+=str(value)+"\n"
+    data_row = re.sub(","," ;", data_row)
+    
     return data_row
