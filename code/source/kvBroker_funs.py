@@ -74,7 +74,8 @@ def request_servers(server_list,command,server_threads):
         if server_threads[server].is_alive:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect((server_threads[server]._args[0], int(server_threads[server]._args[1])))
-                s.sendall(b'exit, world')
+                # command = command.encode()
+                s.sendall(command)
                 data = s.recv(1024)
                 data_str = data.decode()
 

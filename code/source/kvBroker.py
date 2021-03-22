@@ -28,5 +28,5 @@ total_server_num,server_threads = kvbf.server_connection(serverFile_path)
 server_ids_to_request = random.sample(range(0,total_server_num),k_rand_servers)
 print(server_ids_to_request)
 
-command = "PUT"
+command = b"PUT"
 kvbf.request_servers(server_ids_to_request, command, server_threads)
