@@ -26,10 +26,13 @@ def PUT_query(data,trie_server_dict):
     top_level_key = re.sub(r"\"","",top_level_key)
     # top_level_key = top_level_key.rstrip("\'")
     print(f"Top level key: {top_level_key}")
+
     # exit()
     # print(data_nested)
 
-    # tr.trie_insert_key(trie_server_dict, )
+    tr.trie_insert_key(trie_server_dict,top_level_key,data,True)
+    out1,out2,key_node = tr.trie_find_key(trie_server_dict, top_level_key)
+    print(key_node.word,key_node.value,key_node.value_type)
 
     pass
 

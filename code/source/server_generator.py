@@ -33,10 +33,11 @@ class Server_Generator:
                         break
 
                     if "exit" in data_str:
-                        print(f"\nExiting world..\n")
+                        print(f"\nBye Bye world..\n")
+                        conn.sendall(b"RIP")
                         conn.shutdown(socket.SHUT_RDWR)
                         conn.close()
-                        return 9
+                        exit()
                 
                     try:
                         data_row = data_str.split(" ",maxsplit=1)

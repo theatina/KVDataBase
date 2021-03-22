@@ -77,22 +77,24 @@ def server_connection(serverFile_path):
     return len(server_ip_port),threads
 
 
+def server_sock_connection(server_list):
+    sock_list = []
+    for i,server in enumerate(server_list):
+        sock_list.append(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+        sock_list[i].connect((server_list[i]._args[0], int(server_list[i]._args[1])))
 
-def request_servers(server_list,command,server_threads):
+    return sock_list
+
+def server_request(sock_list,command):
     command = command.encode()
-    for server in server_list:
-        if server_threads[server].is_alive:
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((server_threads[server]._args[0], int(server_threads[server]._args[1])))
-                # command_to_send = command.encode("ascii")
-                s.sendall(command)
-                data = s.recv(2048)
-                data_str = data.decode()
-
-        print(f"Received {data_str} ")    
+    for sock in sock_list:
+        sock.sendall(command)
+        data = sock.recv(2048)
+        data_str = data.decode()
 
 
-def send_data(server_threads,data,total_server_num,k_rand_servers):
+
+def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list):
 
     server_ids_to_request = random.sample(range(0,total_server_num),k_rand_servers)
     print(server_ids_to_request)
@@ -100,5 +102,52 @@ def send_data(server_threads,data,total_server_num,k_rand_servers):
     for row in data:
         command_data_sep = " "
 
-        command_send = 'PUT' + command_data_sep + row
-        request_servers(server_ids_to_request, command_send, server_threads)
+        command_to_send = 'PUT ' + command_data_sep + row
+        server_request(sock_list, command_to_send)
+
+def server_exit_request(socket_list):
+    for sock in socket_list:
+        sock.sendall(b"exit")
+        data = sock.recv(2048)
+        data_str = data.decode()
+        if data_str=="RIP":
+            # print(sock.getpeername())
+            print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} left the chat")
+
+
+def query_time(sock_list,k_rand_servers):
+    running = True
+    while running:
+        user_input = input("\nInsert Query: ")
+        if user_input=="exit":
+            # extra guard
+            running = False
+            break
+
+        command = user_input.split(" ")[0]
+        server_request(sock_list,command)
+
+    server_exit_request(sock_list)
+    # for sock in sock_list:
+    #     sock.shutdown(socket.SHUT_RDWR)
+    #     sock.close()
+        
+
+
+
+
+# def request_servers(server_list,command,server_threads):
+#     command = command.encode()
+    
+#     for server in server_list:
+#         if server_threads[server].is_alive:
+#             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+#                 s.connect((server_threads[server]._args[0], int(server_threads[server]._args[1])))
+#                 # command_to_send = command.encode("ascii")
+#                 s.sendall(command)
+#                 data = s.recv(2048)
+#                 data_str = data.decode()
+#                 # s.close
+#                 # s.shutdown(socket.SHUT_RDWR)
+
+#         print(f"Received {data_str} ")    

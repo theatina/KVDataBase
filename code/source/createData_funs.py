@@ -125,11 +125,12 @@ def value_level(keys,level):
 def textfile_modifications(data,value):
     
     data+=str(value)+"\n"
-    data = re.sub(","," ;", data)
-    data = re.sub("'","\"", data)
-    data = re.sub("\":","\" :", data)
+    data = re.sub(r","," ;", data)
+    data = re.sub(r"'","\"", data)
+    data = re.sub(r"\":","\" :", data)
     data = re.sub(r"{\"","{ \"", data)
-    data = re.sub("}"," }", data)
+    data = re.sub(r"}"," }", data)
+    data = re.sub(r"{ }","{}", data)
 
     return data
 

@@ -27,6 +27,7 @@ class Trie_Node():
         self.children_nodes = [ ]
         
         self.end_of_word = False
+        self.word = None
         
         # if end_of_word==True, this indicates a key with the following value or nested keys
         self.nested_keys = []
@@ -35,9 +36,16 @@ class Trie_Node():
         self.value_type = type(self.value)
 
         # if top/high - level key
-        self.top_level_key = False
-        
+        self.istop_level_key = False
+
+
+def insert_value(trie_insert_key,new_child,value):
+
     
+
+    return new_child
+    
+
 def insert_child(children_list,new_child):
 
     if len(children_list)==0:
@@ -57,7 +65,7 @@ def insert_child(children_list,new_child):
       
 
 # insertion of word in the trie dictionary
-def trie_insert_key(trie_dictionary, key, value, top_level_key):
+def trie_insert_key(trie_dictionary, key, value, istop_level_key):
     curr_node = trie_dictionary
     for letter in key:
         char_in_trie = False
@@ -77,6 +85,10 @@ def trie_insert_key(trie_dictionary, key, value, top_level_key):
             curr_node = new_child
             
     curr_node.end_of_word = True
+    curr_node.istop_level_key = istop_level_key
+    curr_node.word = key
+    insert_value(trie_dictionary,curr_node,value)
+
     
 def data_indexing_from_file(trie_dict,filepath):
     lines = open(filepath,"r",encoding="utf-8").read().split("\n")
@@ -105,11 +117,11 @@ def trie_find_key(trie_dictionary,key):
         word_found = True
         value = curr_node.value
     
-    return word_found, value
+    return word_found, value, curr_node
 
 
 def trie_delete_key(trie_dictionary,key):
-    
+
 
     return 9
 

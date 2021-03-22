@@ -30,6 +30,6 @@ for th in server_threads:
     th.join(0.1)
     threads_exited = True
     
-
-kvbf.send_data(server_threads,data,total_server_num,k_rand_servers)
-
+socket_list = kvbf.server_sock_connection(server_threads)
+kvbf.send_data(server_threads,data,total_server_num,k_rand_servers,socket_list)
+kvbf.query_time(socket_list)
