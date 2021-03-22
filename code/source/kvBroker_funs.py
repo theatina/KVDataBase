@@ -56,18 +56,18 @@ def server_connection(serverFile_path):
     for ip,port in server_ip_port:
         threads.append(threading.Thread(target=thread_fun,args=(ip,port)))
 
-    threads_exited = False
-    for th in threads:
-        th.start()
-        th.join(0.1)
-        threads_exited = True
+    # threads_exited = False
+    # for th in threads:
+    #     th.start()
+    #     th.join(0.1)
+    #     threads_exited = True
 
     return len(server_ip_port),threads
 
 
 
 def request_servers(server_list,command,server_threads):
-    # command = command.encode()
+    command = command.encode()
     for server in server_list:
         if server_threads[server].is_alive:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -88,5 +88,5 @@ def send_data(server_threads,data,total_server_num,k_rand_servers):
     for row in data:
         command_data_sep = " "
 
-        command_send = b'PUT'# + command_data_sep + row
+        command_send = 'PUT' + command_data_sep + row
         request_servers(server_ids_to_request, command_send, server_threads)

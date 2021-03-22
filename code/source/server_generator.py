@@ -17,7 +17,7 @@ class Server_Generator:
         # server data 
         self.trie_dictionary = None
 
-    def startserver(self):
+    def startserver(self,trie_server_dict):
         print(f"\nServer: Hi, my ip is: {self.ip} and port: {self.port}")
         while True:
             self.socket.listen()
@@ -31,30 +31,43 @@ class Server_Generator:
                     # print(f"port {self.port} receives '{data_str}'")
                     if not data:
                         break
-                
-                    data_row = data_str.split(" ",maxsplit=1)
-                    if len(data_row)<2:
-                        raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
-                    # print(data_row)
-                    command = re.findall(r"[A-Z]+",data_row[0])[0]
-                    # print(command)
-                    if command == "PUT":
-                        kvsf.PUT_query(data_row[1])
-                    elif data_str == "GET":
-                        kvsf.GET_query(data_row[1])
-                    elif data_str == "DELETE":
-                        kvsf.DELETE_query(data_row[1])
-                    elif data_str == "GET":
-                        kvsf.QUERY_query(data_row[1])
-                    else:
-                        continue
-                    
-                    conn.sendall(data)
+
                     if "exit" in data_str:
                         print(f"\nExiting world..\n")
                         conn.shutdown(socket.SHUT_RDWR)
                         conn.close()
                         return 9
+                
+                    try:
+                        data_row = data_str.split(" ",maxsplit=1)
+                        if len(data_row)<2:
+                            raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
+                        # print(data_row)
+                        command = re.findall(r"[A-Z]+",data_row[0])[0]
+                        # print(command)
+                        if command == "PUT":
+                            kvsf.PUT_query(data_row[1],trie_server_dict)
+                        elif data_str == "GET":
+                            kvsf.GET_query(data_row[1],trie_server_dict)
+                        elif data_str == "DELETE":
+                            kvsf.DELETE_query(data_row[1],trie_server_dict)
+                        elif data_str == "GET":
+                            kvsf.QUERY_query(data_row[1],trie_server_dict)
+                        else:
+                            continue
+                    
+                        
+                    
+                        conn.sendall(b"OK")
+                        # if "exit" in data_str:
+                        #     print(f"\nExiting world..\n")
+                        #     conn.shutdown(socket.SHUT_RDWR)
+                        #     conn.close()
+                        #     return 9
+                        
+                    except ce.QueryError as err:
+                        print(f"\nServer {self.ip}:{self.port} : {err.args[0]}")
+                        
                     
                     
             

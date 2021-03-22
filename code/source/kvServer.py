@@ -28,9 +28,11 @@ args = parser.parse_args()
 ip = args.a
 port = int(args.p)
 
+trie_server_dict = tr.Trie_Node(".")
 
 s = sg.Server_Generator(ip,port)
-s.startserver()
+s.startserver(trie_server_dict)
+
 
 
 # HOST = ip           # Standard loopback interface address (localhost)

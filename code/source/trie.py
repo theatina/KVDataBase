@@ -30,8 +30,9 @@ class Trie_Node():
         
         # if end_of_word==True, this indicates a key with the following value or nested keys
         self.nested_keys = []
+        # value can be a set(empty/non-empty), string, float, int 
         self.value = None
-        self.value_type = None
+        self.value_type = type(self.value)
 
         # if top/high - level key
         self.top_level_key = False
@@ -79,7 +80,7 @@ def trie_insert_key(trie_dictionary, key, value, top_level_key):
     
 def data_indexing_from_file(trie_dict,filepath):
     lines = open(filepath,"r",encoding="utf-8").read().split("\n")
-    
+
 
 
 def trie_find_key(trie_dictionary,key):
@@ -107,11 +108,16 @@ def trie_find_key(trie_dictionary,key):
     return word_found, value
 
 
+def trie_delete_key(trie_dictionary,key):
+    
 
-def trie_print_words(trie_dictionary):
-    temp_word = ""
-    end_of_word = False
-    trie_node = trie_dictionary
+    return 9
+
+
+# def trie_print_words(trie_dictionary):
+#     temp_word = ""
+#     end_of_word = False
+#     trie_node = trie_dictionary
 
     # while end_of_word==0:
         
