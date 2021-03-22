@@ -1,5 +1,8 @@
+import re 
 import socket
 import threading
+import kvServer_funs as kvsf
+import customExceptions as ce
 
 class Server_Generator:
     
@@ -23,11 +26,28 @@ class Server_Generator:
             with conn:
                 print(f"Server with ip '{self.ip}' and port '{self.port}': Connected by", addr)
                 while True:
-                    data = conn.recv(1024)
+                    data = conn.recv(2048)
                     data_str = data.decode()
-                    print(f"port {self.port} receives '{data_str}'")
+                    # print(f"port {self.port} receives '{data_str}'")
                     if not data:
                         break
+                
+                    data_row = data_str.split(" ",maxsplit=1)
+                    if len(data_row)<2:
+                        raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
+                    # print(data_row)
+                    command = re.findall(r"[A-Z]+",data_row[0])[0]
+                    # print(command)
+                    if command == "PUT":
+                        kvsf.PUT_query(data_row[1])
+                    elif data_str == "GET":
+                        kvsf.GET_query(data_row[1])
+                    elif data_str == "DELETE":
+                        kvsf.DELETE_query(data_row[1])
+                    elif data_str == "GET":
+                        kvsf.QUERY_query(data_row[1])
+                    else:
+                        continue
                     
                     conn.sendall(data)
                     if "exit" in data_str:

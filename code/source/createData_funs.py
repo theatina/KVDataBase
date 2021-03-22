@@ -7,25 +7,23 @@ from datetime import datetime
 import numpy as np
 import string
 import os
-
-class UsrInputError(Exception):
-    pass
+import customExceptions as ce
 
 def input_check(args):
     
     try:
         if not os.path.exists(args.k):
-            raise UsrInputError(f"\nERROR: File '{args.k}' does not exist!!\n") 
+            raise ce.UsrInputError(f"\nERROR: File '{args.k}' does not exist!!\n") 
         if args.n < 1:
-            raise UsrInputError(f"\nERROR: Lines must be > 0 ( '{args.n}' value was given )\n")
+            raise ce.UsrInputError(f"\nERROR: Lines must be > 0 ( '{args.n}' value was given )\n")
         if args.d < 0:
-            raise UsrInputError(f"\nERROR: Max nesting level must be > 0 ( '{args.d}' value was given )\n")
+            raise ce.UsrInputError(f"\nERROR: Max nesting level must be > 0 ( '{args.d}' value was given )\n")
         if args.m < 1:
-            raise UsrInputError(f"\nERROR: Max number of keys must be > 0 ( '{args.m}' value was given )\n")
+            raise ce.UsrInputError(f"\nERROR: Max number of keys must be > 0 ( '{args.m}' value was given )\n")
         if args.l < 1:
-            raise UsrInputError(f"\nERROR: Max string length must be > 0 ( '{args.l}' value was given )\n")
+            raise ce.UsrInputError(f"\nERROR: Max string length must be > 0 ( '{args.l}' value was given )\n")
 
-    except UsrInputError as err:
+    except ce.UsrInputError as err:
         print(err.args[0])
         exit()
 

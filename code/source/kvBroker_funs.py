@@ -10,21 +10,18 @@ import os
 from subprocess import call
 import threading
 import socket
-
-class UsrInputError(Exception):
-    pass
-
+import customExceptions as ce 
 def input_check(args):
     
     try:
         if not os.path.exists(args.s):
-            raise UsrInputError(f"\nERROR: File '{args.s}' does not exist!!\n") 
+            raise ce.UsrInputError(f"\nERROR: File '{args.s}' does not exist!!\n") 
         if not os.path.exists(args.i):
-            raise UsrInputError(f"\nERROR: File '{args.i}' does not exist!!\n") 
+            raise ce.UsrInputError(f"\nERROR: File '{args.i}' does not exist!!\n") 
         if args.k < 1:
-            raise UsrInputError(f"\nERROR: Server number must be > 0 ( '{args.k}' value was given )\n")
+            raise ce.UsrInputError(f"\nERROR: Server number must be > 0 ( '{args.k}' value was given )\n")
 
-    except UsrInputError as err:
+    except ce.UsrInputError as err:
         print(err.args[0])
         exit()
 
@@ -70,14 +67,26 @@ def server_connection(serverFile_path):
 
 
 def request_servers(server_list,command,server_threads):
+    # command = command.encode()
     for server in server_list:
         if server_threads[server].is_alive:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect((server_threads[server]._args[0], int(server_threads[server]._args[1])))
-                # command = command.encode()
+                # command_to_send = command.encode("ascii")
                 s.sendall(command)
-                data = s.recv(1024)
+                data = s.recv(2048)
                 data_str = data.decode()
 
         print(f"Received {data_str} ")    
 
+
+def send_data(server_threads,data,total_server_num,k_rand_servers):
+
+    server_ids_to_request = random.sample(range(0,total_server_num),k_rand_servers)
+    print(server_ids_to_request)
+    print(data)
+    for row in data:
+        command_data_sep = " "
+
+        command_send = b'PUT'# + command_data_sep + row
+        request_servers(server_ids_to_request, command_send, server_threads)
