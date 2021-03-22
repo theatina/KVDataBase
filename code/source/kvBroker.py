@@ -22,8 +22,6 @@ serverFile_path,dataToIndex_path,k_rand_servers = kvbf.arg_parsing(serverFile_pa
 
 data = kvbf.read_file(dataToIndex_path)
 # trie_dictionary = tr.Trie_Node(".")
-print(data)
-exit()
 total_server_num,server_threads = kvbf.server_connection(serverFile_path)
 
 threads_exited = False

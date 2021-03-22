@@ -11,6 +11,8 @@ from subprocess import call
 import threading
 import socket
 import customExceptions as ce 
+
+
 def input_check(args):
     
     try:
@@ -40,7 +42,17 @@ def arg_parsing(serverFile_path,dataToIndex_path):
 
 
 def read_file(filepath):
-    return open(filepath,"r",encoding="utf-8").read().split("\n")
+    data = open(filepath,"r",encoding="utf-8").read()
+    data = re.sub(r"\n\s+","\n",data)
+    data = re.sub(r"\n$","",data)
+    data = data.split("\n")
+
+    return data
+
+    # return [ elem for elem in open(filepath,"r",encoding="utf-8").read().split("\n") if elem!=r"\s+" ]
+
+
+
 
 def thread_fun(ip,port):
     call(["python3", "kvServer.py", "-a", ip, "-p", port])
