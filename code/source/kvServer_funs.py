@@ -12,10 +12,19 @@ LT1200012
 import re
 import trie as tr
 
-def check_query(data,trie_server_dict):
+def CHECK_query(data,trie_server_dict):
     print(f"\nServer Check\n")
     print(f"Data: {data}")
     pass
+
+def silly_tokenizer(data):
+    temp_data_dict = {}
+    data = data.split(" ")
+    print(data)
+    exit()
+
+
+    return data
 
 def PUT_query(data,trie_server_dict):
     print(f"\nPUT request\n")
@@ -28,17 +37,33 @@ def PUT_query(data,trie_server_dict):
     print(f"Top level key: {top_level_key}")
 
     # exit()
-    # print(data_nested)
+    print(data)
 
     tr.trie_insert_key(trie_server_dict,top_level_key,data,True)
-    out1,out2,key_node = tr.trie_find_key(trie_server_dict, top_level_key)
-    print(key_node.word,key_node.value,key_node.value_type)
+    
+    
+    # tr.trie_delete_key(trie_server_dict,top_level_key)
+    # temp_data_dict = silly_tokenizer(data)
+    # # print(temp_data_dict)
+    # out1,out2,key_node = tr.trie_find_key(trie_server_dict, "adfadf")
+    # if key_node!=None:
+    #     print(key_node.word,key_node.value,key_node.value_type)
+    # else:
+    #     print(out1,out2)
 
     pass
+
 
 def GET_query(data,trie_server_dict):
     print(f"\nGET request\n")
     print(f"Data: {data}")
+    
+    # GET key
+    # searches the nested keys and the keypaths(if the top level key is the desired) to create the data row
+
+    # Get keypath
+    # searches for the last key of the path and its respective keypath dictionary to get the value of the certain keypath if it exists
+    
     pass
 
 def DELETE_query(data,trie_server_dict):

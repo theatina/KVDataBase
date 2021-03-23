@@ -34,14 +34,28 @@ class Trie_Node():
         # value can be a set(empty/non-empty), string, float, int 
         self.value = None
         self.value_type = type(self.value)
+        # dictionary with all the keypaths and their respective values
+        self.keypath_dictionary = {}
 
         # if top/high - level key
         self.istop_level_key = False
 
+    def destructor(self):
+        self.character = None
+        self.parent_node = None
+        self.children_nodes = [ ]
+        self.end_of_word = False
+        self.word = None
+        self.nested_keys = []
+        self.value = None
+        self.value_type = None
+        self.keypath_dictionary = {}
+        self.istop_level_key = False
+
+
 
 def insert_value(trie_insert_key,new_child,value):
 
-    
 
     return new_child
     
@@ -111,7 +125,7 @@ def trie_find_key(trie_dictionary,key):
                 break
             
         if letter_found == False:
-            return word_found,value
+            return word_found,value,None
 
     if letter_found == True and curr_node.end_of_word == True:
         word_found = True
@@ -122,6 +136,23 @@ def trie_find_key(trie_dictionary,key):
 
 def trie_delete_key(trie_dictionary,key):
 
+    found_flag, value, key_node = trie_find_key(trie_dictionary,key)
+    if found_flag==True:
+        temp_node = key_node
+        while temp_node!=None:
+            curr_node = temp_node
+            temp_node = temp_node.parent_node
+            if len(curr_node.children_nodes)==0:
+                parent = temp_node
+                if temp_node!=None and curr_node in temp_node.children_nodes:
+                    temp_node.children_nodes.remove(curr_node)
+                
+                curr_node.destructor()
+            # elif:
+                
+            
+    else:
+        print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
 
     return 9
 

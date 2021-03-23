@@ -33,7 +33,7 @@ class Server_Generator:
                         break
 
                     if "exit" in data_str:
-                        print(f"\nBye Bye world..\n")
+                        print(f"\n{self.ip}:{self.port} : Bye Bye world..")
                         conn.sendall(b"RIP")
                         conn.shutdown(socket.SHUT_RDWR)
                         conn.close()
@@ -41,6 +41,7 @@ class Server_Generator:
                 
                     try:
                         data_row = data_str.split(" ",maxsplit=1)
+                        print(data_row)
                         if len(data_row)<2:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
                         # print(data_row)
@@ -68,7 +69,7 @@ class Server_Generator:
                         
                     except ce.QueryError as err:
                         print(f"\nServer {self.ip}:{self.port} : {err.args[0]}")
-                        
+                        conn.sendall(b"Problem")
                     
                     
             

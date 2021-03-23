@@ -85,25 +85,35 @@ def server_sock_connection(server_list):
 
     return sock_list
 
-def server_request(sock_list,command):
-    command = command.encode()
+
+def server_request(sock_list,request):
+    request = request.encode()
     for sock in sock_list:
-        sock.sendall(command)
+        sock.sendall(request)
         data = sock.recv(2048)
         data_str = data.decode()
 
 
+def server_store(sock_list,request,sock_indices):
+    request = request.encode()
+    for sock_ind in sock_indices:
+        sock_list[sock_ind].sendall(request)
+        data = sock_list[sock_ind].recv(2048)
+        # data_str = data.decode()
+
 
 def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list):
-
-    server_ids_to_request = random.sample(range(0,total_server_num),k_rand_servers)
-    print(server_ids_to_request)
-    print(data)
+ 
     for row in data:
+        sock_indices = random.sample(range(0,total_server_num),k_rand_servers)
+        # print(sock_indices)
+        # print(data)
         command_data_sep = " "
 
-        command_to_send = 'PUT ' + command_data_sep + row
-        server_request(sock_list, command_to_send)
+        data_to_send = 'PUT' + command_data_sep + row
+        server_store(sock_list,data_to_send,sock_indices)
+        # server_request(sock_list, command_to_send)
+
 
 def server_exit_request(socket_list):
     for sock in socket_list:
@@ -112,10 +122,10 @@ def server_exit_request(socket_list):
         data_str = data.decode()
         if data_str=="RIP":
             # print(sock.getpeername())
-            print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} left the chat")
+            print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} has left the chat\n")
 
 
-def query_time(sock_list,k_rand_servers):
+def query_time(sock_list):
     running = True
     while running:
         user_input = input("\nInsert Query: ")
@@ -124,8 +134,8 @@ def query_time(sock_list,k_rand_servers):
             running = False
             break
 
-        command = user_input.split(" ")[0]
-        server_request(sock_list,command)
+        # request = user_input.split(" ")
+        server_request(sock_list,user_input)
 
     server_exit_request(sock_list)
     # for sock in sock_list:
