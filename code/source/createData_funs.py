@@ -86,7 +86,8 @@ def rand_str_generator():
 def create_value(key):
     val = {}
     random.seed(datetime.now())
-    non_empty_val = random.randint(0, 1)
+    # in 1/5 times it may not have a value -> {} (empty set)
+    non_empty_val = random.randint(0, 4)
     # print(f"empty val: {non_empty_val}")
     if non_empty_val:
         get_key_type = key_type_dict[key]
@@ -138,7 +139,7 @@ def data_row_creation(line_num):
     global key_nesting
 
     value = {}
-    top_level_key = "key"
+    top_level_key = "tl_key"
     data_row = "\""+top_level_key+str(line_num+1)+"\" : "#+str(value)+"\n"  
 
     level_0_keys = level_keys()
