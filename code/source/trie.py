@@ -130,36 +130,29 @@ def trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value):
     curr_node.keypath_list.append(keypath)
     insert_value(trie_dictionary,curr_node,value)
 
-
+kpath = []
 def trie_insert_entry(trie_dictionary, entry_data_dictionary, keypath):
+    global kpath
     # print(entry_data_dictionary)
     istop_level_key=False
-    
+    value = None
+
     if type(entry_data_dictionary)!=type(dict()):
         # print(f"type:{type(entry_data_dictionary)}")
         return entry_data_dictionary
     
-    for key in entry_data_dictionary.keys():
-        keypath.append(key)
-        value = trie_insert_entry(trie_dictionary,entry_data_dictionary[key],keypath)
-        # if len(keypath)==1:
-        #     istop_level_key=True
+    for i,key in enumerate(entry_data_dictionary.keys()):
+        temp_keypath = keypath.copy()
+        temp_keypath.append(key)
+        # print(temp_keypath,key)
+        
+        value = trie_insert_entry(trie_dictionary,entry_data_dictionary[key],temp_keypath)
+        if len(temp_keypath)==1:
+            istop_level_key=True
+        trie_insert_keypaths(trie_dictionary, key, temp_keypath, istop_level_key, value)
+        istop_level_key=False
 
-        if value==type(dict()):
-            value = None
-            # print(value)
-        print(keypath)
-        trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value)
-        keypath=keypath[:-1]
-        # print(trie_find_key(trie_dictionary, key))
-    # for k in entry_data_dictionary:
-    #     # print(k)
-    #     trie_insert_entry(trie_dictionary, k)
-    keypath=keypath[:-1]
-    
     return None
-
-    pass
 
     
 def data_indexing_from_file(trie_dict,filepath):

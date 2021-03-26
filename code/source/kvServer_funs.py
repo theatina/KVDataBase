@@ -32,7 +32,7 @@ def json_to_dict(data):
     return temp_data_dict
 
 def PUT_query(data,trie_server_dict):
-    global keypath
+    # global keypath
     
     print(f"\nPUT request\n")
     data_dict = json_to_dict(data)
@@ -72,13 +72,19 @@ def DELETE_query(data,trie_server_dict):
 def QUERY_query(data,trie_server_dict):
     print(f"\nQUERY request\n")
     print(f"Data: {data}")
-    key = data.split(".")[-1]
+    key_path = data.split(".")
+    key = key_path[-1]
     print(key)
 
     # test_key = "postal_code"
     found,val,key_node = tr.trie_find_key(trie_server_dict, key)
     print(trie_server_dict)
     if found:
-        print(f"\nKey: {key_node.key} \nKeypaths: {key_node.keypath_list}\nValue: {key_node.value_list}")
+        # print(f"\nKey: {key_node.key} \nKeypaths: {key_node.keypath_list}\nValue: {key_node.value_list}")
+        for i,path in enumerate(key_node.keypath_list):
+            print((path,key_path,key_node.istop_level_key))
+            if key_path==path:
+                print(f"\nKey: '{key_node.key}' \nKeypath: {path}\nValue: {key_node.value_list[i]}\nTop_level_key: {key_node.istop_level_key}")
+                break
 
     pass
