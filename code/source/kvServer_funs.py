@@ -84,7 +84,7 @@ def QUERY_query(data,trie_server_dict):
         for i,path in enumerate(key_node.keypath_list):
             print((path,key_path,key_node.istop_level_key))
             if key_path==path:
-                print(f"\nKey: '{key_node.key}' \nKeypath: {path}\nValue: {key_node.value_list[i]}\nTop_level_key: {key_node.istop_level_key}")
+                print(f"\nKey: '{key_node.key}' \nKeypath: {path}\nValue: {key_node.value_list[i]}\nTop_level_key: {key_node.istop_level_key}\nNested_keys: {key_node.nested_keys[i]}")
                 break
 
     pass

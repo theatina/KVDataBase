@@ -104,7 +104,7 @@ def trie_insert_key(trie_dictionary, key, value, istop_level_key):
     curr_node.word = key
     insert_value(trie_dictionary,curr_node,value)
 
-def trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value):
+def trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value, nested_key_list):
     curr_node = trie_dictionary
     for letter in key:
         char_in_trie = False
@@ -128,6 +128,7 @@ def trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value):
     if curr_node.key==None:
         curr_node.key = key
     curr_node.keypath_list.append(keypath)
+    curr_node.nested_keys.append(nested_key_list)
     insert_value(trie_dictionary,curr_node,value)
 
 kpath = []
@@ -149,7 +150,13 @@ def trie_insert_entry(trie_dictionary, entry_data_dictionary, keypath):
         value = trie_insert_entry(trie_dictionary,entry_data_dictionary[key],temp_keypath)
         if len(temp_keypath)==1:
             istop_level_key=True
-        trie_insert_keypaths(trie_dictionary, key, temp_keypath, istop_level_key, value)
+        
+        nested_key_list=[]
+        if type(entry_data_dictionary[key])==type(dict()):
+            print(key,list(entry_data_dictionary[key].keys()))
+            nested_key_list = list(entry_data_dictionary[key].keys())
+
+        trie_insert_keypaths(trie_dictionary, key, temp_keypath, istop_level_key, value, nested_key_list)
         istop_level_key=False
 
     return None
