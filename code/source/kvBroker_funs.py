@@ -111,7 +111,7 @@ def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list):
         command_data_sep = " "
 
         data_to_send = 'PUT' + command_data_sep + row
-        server_store(sock_list,data_to_send,sock_indices)
+        server_store(sock_list,data_to_send,range(0,total_server_num))
         # server_request(sock_list, command_to_send)
 
 

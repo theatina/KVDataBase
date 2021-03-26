@@ -70,6 +70,7 @@ def json_to_dict(data):
 
 with open("../data/dataToIndex.txt","r",encoding="utf-8") as r:
     lines = r.readlines()
+    
     for s in lines:
         data_dict = json_to_dict(s)
         # data_dict2 = json_to_dict(string2)

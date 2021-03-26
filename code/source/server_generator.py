@@ -49,14 +49,15 @@ class Server_Generator:
                         # print(command)
                         if command == "PUT":
                             kvsf.PUT_query(data_row[1],trie_server_dict)
-                        elif data_str == "GET":
+                        elif command == "GET":
                             kvsf.GET_query(data_row[1],trie_server_dict)
-                        elif data_str == "DELETE":
+                        elif command == "DELETE":
                             kvsf.DELETE_query(data_row[1],trie_server_dict)
-                        elif data_str == "GET":
+                        elif command == "QUERY":
                             kvsf.QUERY_query(data_row[1],trie_server_dict)
                         else:
-                            continue
+                            raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
+                            # continue
                     
                         
                     
