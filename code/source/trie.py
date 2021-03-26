@@ -33,6 +33,7 @@ class Trie_Node():
         self.nested_keys = []
         # value can be a set(empty/non-empty), string, float, int 
         self.value = None
+        self.value_list = []
         self.value_type = type(self.value)
         # dictionary with all the keypaths and their respective values
         self.keypath_list = []
@@ -55,7 +56,7 @@ class Trie_Node():
 
 
 def insert_value(trie_insert_key,new_child,value):
-
+    new_child.value_list.append(value)
 
     return new_child
     
@@ -130,7 +131,7 @@ def trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value):
     insert_value(trie_dictionary,curr_node,value)
 
 
-def trie_insert_entry(trie_dictionary, entry_data_dictionary,keypath):
+def trie_insert_entry(trie_dictionary, entry_data_dictionary, keypath):
     # print(entry_data_dictionary)
     istop_level_key=False
     
@@ -144,16 +145,20 @@ def trie_insert_entry(trie_dictionary, entry_data_dictionary,keypath):
         # if len(keypath)==1:
         #     istop_level_key=True
 
-        if value==type(dict):
+        if value==type(dict()):
             value = None
             # print(value)
-        
+        print(keypath)
         trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value)
+        keypath=keypath[:-1]
         # print(trie_find_key(trie_dictionary, key))
     # for k in entry_data_dictionary:
     #     # print(k)
     #     trie_insert_entry(trie_dictionary, k)
+    keypath=keypath[:-1]
     
+    return None
+
     pass
 
     

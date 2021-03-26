@@ -79,6 +79,6 @@ def QUERY_query(data,trie_server_dict):
     found,val,key_node = tr.trie_find_key(trie_server_dict, key)
     print(trie_server_dict)
     if found:
-        print(f"\nKey: {key_node.key} keypath dict: {key_node.keypath_list}")
+        print(f"\nKey: {key_node.key} \nKeypaths: {key_node.keypath_list}\nValue: {key_node.value_list}")
 
     pass
