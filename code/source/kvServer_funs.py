@@ -38,8 +38,11 @@ def PUT_query(data,trie_server_dict):
     data_dict = json_to_dict(data)
     print(print(f"Data: {data_dict}"))
     
-    keypath = []
-    tr.trie_insert_entry(trie_server_dict, data_dict, keypath)
+    # nested trie
+    tr.nested_trie(trie_server_dict, data_dict) 
+
+    # keypath = []
+    # tr.trie_insert_entry(trie_server_dict, data_dict, keypath)
     for k in data_dict.keys():
         found,val,key_node = tr.trie_find_key(trie_server_dict, k)
         print(f"key: {key_node.key} keypath dict: {key_node.keypath_list}")
@@ -64,9 +67,10 @@ def GET_query(data,trie_server_dict):
     
     pass
 
-def DELETE_query(data,trie_server_dict):
+def DELETE_query(key,trie_server_dict):
     print(f"\nDELETE request\n")
-    print(f"Data: {data}")
+    print(f"Data: {key}")
+    tr.trie_delete_key(trie_server_dict, key)
     pass
 
 def QUERY_query(data,trie_server_dict):
@@ -78,7 +82,7 @@ def QUERY_query(data,trie_server_dict):
 
     # test_key = "postal_code"
     found,val,key_node = tr.trie_find_key(trie_server_dict, key)
-    print(trie_server_dict)
+    # print(trie_server_dict)
     if found:
         # print(f"\nKey: {key_node.key} \nKeypaths: {key_node.keypath_list}\nValue: {key_node.value_list}")
         for i,path in enumerate(key_node.keypath_list):
@@ -86,5 +90,9 @@ def QUERY_query(data,trie_server_dict):
             if key_path==path:
                 print(f"\nKey: '{key_node.key}' \nKeypath: {path}\nValue: {key_node.value_list[i]}\nTop_level_key: {key_node.istop_level_key}\nNested_keys: {key_node.nested_keys[i]}")
                 break
-
+    else:
+        if len(key_path)==1:
+            print(f"\nKey '{data}' not found!")
+        else:
+            print(f"\nKeypath '{data}' not found!")
     pass

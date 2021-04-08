@@ -129,7 +129,7 @@ def query_time(sock_list):
     running = True
     while running:
         user_input = input("\nInsert Query: ")
-        if user_input=="exit":
+        if "exit" in user_input:
             # extra guard
             running = False
             break
