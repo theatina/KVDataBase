@@ -59,7 +59,11 @@ def PUT_query(data,trie_server_dict):
 def GET_query(data,trie_server_dict):
     # print(f"\nGET request\n")
     # print(f"Data: {data}")
+    data = re.sub("[\"']", "", data)
+    # print(data)
     key_path = data.split(".")
+    for i,k in enumerate(key_path):
+        key_path[i] = re.findall(r"[a-zA-Z\.\d]+", key_path[i])[0]
     key = key_path[0]
     val_dict = {}
     found,val_dict = tr.trie_find_keypath_nested(trie_server_dict, key_path)
@@ -79,13 +83,21 @@ def GET_query(data,trie_server_dict):
 def DELETE_query(key,trie_server_dict):
     # print(f"\nDELETE request\n")
     # print(f"Data: {key}")
-    success = tr.trie_delete_key_nested(trie_server_dict, key)
-    return success
+    key = re.sub("[\"']", "", key)
+    success = tr.trie_delete_key(trie_server_dict, key)
+    if success==9:
+        response="OK"
+    else:
+        response="NO"
+    return response
 
 def QUERY_query(data,trie_server_dict):
     # print(f"\nQUERY request\n")
     # print(f"Data: {data}")
     key_path = data.split(".")
+    for i,k in enumerate(key_path):
+        key_path[i] = re.findall(r"[a-zA-Z\.\d]+", key_path[i])[0]
+    
     key = key_path[0]
     # print(key)
 
@@ -107,7 +119,7 @@ def QUERY_query(data,trie_server_dict):
     #     else:
     #         print(f"\nKeypath '{data}' not found!")
     if found:
-        response = f"{data} : {val_dict}"
+        response = f"{'.'.join(key_path)} : {val_dict}"
     else:
         response=" "
     return response

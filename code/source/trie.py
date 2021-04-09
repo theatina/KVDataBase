@@ -44,7 +44,8 @@ class Trie_Node():
         # nested trie
         self.nested_trie = None
 
-    def destructor(self):
+
+    def __del__(self):
         self.character = None
         self.parent_node = None
         self.children_nodes = [ ]
@@ -55,6 +56,7 @@ class Trie_Node():
         self.value_type = None
         self.keypath_list = []
         self.istop_level_key = False
+        self.nested_trie = None
 
 
 def insert_value(trie_insert_key,new_child,value):
@@ -237,6 +239,12 @@ def trie_find_keypath_nested(trie_dict,keypath_list):
     val_dict = trie_get_value_nested(node)
     return val_dict!={},val_dict
 
+def trie_find_tl_key_nested(trie_dict,keypath_list):
+    found,val,tl_key_node = trie_find_key(trie_dict, keypath_list[0])
+    if tl_key_node==None:
+        return False,{}
+    val_dict = trie_get_value_nested(tl_key_node)
+    return val_dict!={},val_dict
 
 def trie_find_key(trie_dictionary,key):
     word_found = False
@@ -277,12 +285,12 @@ def trie_delete_key(trie_dictionary,key):
                 if temp_node!=None and curr_node in temp_node.children_nodes:
                     temp_node.children_nodes.remove(curr_node)
                 
-                curr_node.destructor()
+                del curr_node
             # elif:
                 
             
     else:
-        print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
+        # print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
         return -9
 
     return 9
@@ -290,8 +298,12 @@ def trie_delete_key(trie_dictionary,key):
 
 def trie_delete_key_nested(trie_dictionary,key):
     found_flag, value, key_node = trie_find_key(trie_dictionary,key)
+    node = key_node
     if found_flag==True:
-        pass
+        while node.nested_trie:
+            pass
+        # trie_delete_key
+         
 
     else:
         print(f"\nKey '{key}' was not found! ( DELETE failed )\n")

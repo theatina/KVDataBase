@@ -87,23 +87,32 @@ def server_sock_connection(server_list):
 
 
 def server_request(sock_list,request):
-    request = request.encode()
+    command = request.split(" ")[0]
+    keypath = request.split(" ")[1:]
+    request_to_send = request.encode()
     responses=[]
     for sock in sock_list:
-        sock.sendall(request)
+        sock.sendall(request_to_send)
         data = sock.recv(2048)
         data_str = data.decode()
-        if "NO" not in data_str:
+        # if any(x in data_str for x in ["NO","OK"])==False:
             # print(data_str)
-            responses.append(data_str)
+        responses.append(data_str)
     # print(responses)
-    if responses.count(" ")==len(responses):
-        print("NOT FOUND")
+    if "DELETE" in command and "OK" in responses:
+        print(f"'{request}' completed successfully!")
+    elif "DELETE" in command and "OK" not in responses:
+        print(f"'{request}' failed!")
+    elif responses.count(" ")==len(responses):
+        print(f"'{' '.join(keypath)}' NOT FOUND")
     else:
-        if " " in responses:
-            responses.remove(" ")
+        responses = [i for i in responses if i!=" " and i!="OK" and i!="NO"]
+        if len(responses)==0:
+            return -9
+        else:
             print(responses[0])
 
+    return 9
 
 def server_store(sock_list,request,sock_indices):
     request = request.encode()
@@ -140,7 +149,7 @@ def query_time(sock_list):
     running = True
     while running:
         user_input = input("\nInsert Query: ")
-        if "exit" in user_input:
+        if "exit" in user_input.lower():
             # extra guard
             running = False
             break

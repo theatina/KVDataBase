@@ -139,7 +139,7 @@ def data_row_creation(line_num):
     global key_nesting
 
     value = {}
-    top_level_key = "tl_key"
+    top_level_key = "tlkey"
     data_row = "\""+top_level_key+str(line_num+1)+"\" : "#+str(value)+"\n"  
 
     level_0_keys = level_keys()

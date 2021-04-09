@@ -47,13 +47,14 @@ class Server_Generator:
                         # print(data_row)
                         command = re.findall(r"[A-Z]+",data_row[0])[0]
                         # print(command)
+                        # data_row[1] = re.sub(r"\s+","",data_row[1])
                         response = " "
                         if command == "PUT":
                             kvsf.PUT_query(data_row[1],trie_server_dict)
                         elif command == "GET":
                             response = kvsf.GET_query(data_row[1],trie_server_dict)
                         elif command == "DELETE":
-                            success = kvsf.DELETE_query(data_row[1],trie_server_dict)
+                            response = kvsf.DELETE_query(data_row[1],trie_server_dict)
                         elif command == "QUERY":
                             response = kvsf.QUERY_query(data_row[1],trie_server_dict)
                         else:
@@ -78,7 +79,7 @@ class Server_Generator:
                         
                     except ce.QueryError as err:
                         print(f"\nServer {self.ip}:{self.port} : {err.args[0]}")
-                        conn.sendall(b"Problem")
+                        conn.sendall(b"NO")
                     
                     
             
