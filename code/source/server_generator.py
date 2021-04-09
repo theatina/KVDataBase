@@ -41,7 +41,17 @@ class Server_Generator:
                 
                     try:
                         data_row = data_str.split(" ",maxsplit=1)
+                        
+                        if "PUT" not in data_str:
+
+                            for i,dr in enumerate(data_row):
+                                data_row[i] = re.sub(r"\s+", "", data_row[i])
+                            data_row = [i for i in data_row if i!=""]
+                            # print(data_row)
+                        
+                        # data_row = data_str.split(" ",maxsplit=1)
                         # print(data_row)
+                        
                         if len(data_row)<2:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
                         # print(data_row)

@@ -79,7 +79,8 @@ def save_names(filepath):
 
 def rand_str_generator():
     word_len = random.randint(1,max_str_len)
-    r_str = ''.join(random.choices(string.ascii_lowercase, k = word_len)) 
+    r_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(word_len))
+    # r_str = ''.join(random.choices(string.ascii_letters, k = word_len)) 
     # print(r_str)
     return r_str
 

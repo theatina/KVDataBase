@@ -154,10 +154,10 @@ def query_time(sock_list):
             running = False
             break
         # elif "DELETE" in user_input:
-
-
+        else:
+            server_request(sock_list,user_input)
         # request = user_input.split(" ")
-        server_request(sock_list,user_input)
+            
 
     server_exit_request(sock_list)
     # for sock in sock_list:
