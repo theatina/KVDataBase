@@ -41,27 +41,35 @@ class Server_Generator:
                 
                     try:
                         data_row = data_str.split(" ",maxsplit=1)
-                        print(data_row)
+                        # print(data_row)
                         if len(data_row)<2:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
                         # print(data_row)
                         command = re.findall(r"[A-Z]+",data_row[0])[0]
                         # print(command)
+                        response = " "
                         if command == "PUT":
                             kvsf.PUT_query(data_row[1],trie_server_dict)
                         elif command == "GET":
-                            kvsf.GET_query(data_row[1],trie_server_dict)
+                            response = kvsf.GET_query(data_row[1],trie_server_dict)
                         elif command == "DELETE":
-                            kvsf.DELETE_query(data_row[1],trie_server_dict)
+                            success = kvsf.DELETE_query(data_row[1],trie_server_dict)
                         elif command == "QUERY":
-                            kvsf.QUERY_query(data_row[1],trie_server_dict)
+                            response = kvsf.QUERY_query(data_row[1],trie_server_dict)
                         else:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
                             # continue
                     
                         
-                    
-                        conn.sendall(b"OK")
+                        
+                        # conn.sendall(b"OK")
+                        
+                        if response=={}:
+                            data_to_send = b"NO"
+                        else:
+                            data_to_send = response.encode()
+                            
+                        conn.sendall(data_to_send)
                         # if "exit" in data_str:
                         #     print(f"\nExiting world..\n")
                         #     conn.shutdown(socket.SHUT_RDWR)

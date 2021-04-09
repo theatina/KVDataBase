@@ -190,7 +190,7 @@ def nested_trie(trie_dict, data_dict):
     insert_nested_trie(node,data_dict[tl_key])
     # print(node.nested_trie.children_nodes)
     # print(node.nested_keys)
-    print(trie_get_value_nested(node))
+    # print(trie_get_value_nested(node))
     # print(trie_find_keypath_nested(trie_dict,["tl_key1","street"]))
     
     pass
@@ -203,29 +203,35 @@ def trie_get_value_nested(node):
     if node.value != None and node.value!={}:
         return node.value 
 
-    val = {}
+    # found = False
+    # new_node = None
+    # value = None
+    val_dict = {}
     # print(node.nested_trie.children_nodes,node.nested_keys)
     k_nested = node.nested_trie
     for key in node.nested_keys:
         found,value,new_node = trie_find_key(k_nested, key)
         # print(key,new_node,value)
-        val[key] = trie_get_value_nested(new_node)
+        val_dict[key] = trie_get_value_nested(new_node)
         # print(key)
 
-    return val
+    return val_dict
 
 def trie_find_keypath_nested(trie_dict,keypath_list):
     found,val,tl_key_node = trie_find_key(trie_dict, keypath_list[0])
+    if tl_key_node==None:
+        return False,{}
     if len(keypath_list)==1:
-        return trie_get_value_nested(tl_key_node)
+        val_dict = trie_get_value_nested(tl_key_node)
+        return val_dict!={},val_dict
     elif len(keypath_list)>1:
         node = tl_key_node
         for key in keypath_list[1:]:
             found,val,node = trie_find_key(node.nested_trie, key)
     
     # print(node.key)
-    
-    return trie_get_value_nested(node)
+    val_dict = trie_get_value_nested(node)
+    return val_dict!={},val_dict
 
 
 def trie_find_key(trie_dictionary,key):
@@ -239,7 +245,7 @@ def trie_find_key(trie_dictionary,key):
         # print(f"{children_chars}")
         for child_node in curr_node.children_nodes:
             if letter == child_node.character:
-                # print(letter)
+                print(letter,child_node.character)
                 curr_node=child_node
                 letter_found = True
                 break
@@ -273,7 +279,20 @@ def trie_delete_key(trie_dictionary,key):
             
     else:
         print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
+        return -9
 
+    return 9
+
+
+def trie_delete_key_nested(trie_dictionary,key):
+    found_flag, value, key_node = trie_find_key(trie_dictionary,key)
+    if found_flag==True:
+        pass
+
+    else:
+        print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
+        return -9
+    
     return 9
 
 
