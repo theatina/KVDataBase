@@ -12,7 +12,6 @@ import threading
 import socket
 import customExceptions as ce 
 
-
 def input_check(args):
     
     try:
@@ -85,21 +84,49 @@ def server_sock_connection(server_list):
 
     return sock_list
 
+def server_sock_connection_check(sock_list,server_list):
+    servers_down = 0
 
-def server_request(sock_list,request):
+    for i,server in enumerate(server_list):
+
+        server_dead = server.is_alive()==False
+        if server_dead:
+            servers_down+=1
+        else:
+            file_num = sock_list[i].fileno()
+            if file_num==-1:
+                servers_down+=1
+
+    return servers_down
+
+
+
+def server_request(sock_list,request,server_list,k_rand_servers):
     command = request.split(" ")[0]
+    
+    servers_down = server_sock_connection_check(sock_list,server_list)
+    # print(servers_down)
+    if "DELETE" in command and servers_down:
+        print(f"\nCannot perform DELETE query with >=1 servers down!")
+        return -9
+    elif ("GET" in command or "QUERY" in command) and servers_down>=k_rand_servers:
+        print(f"\nWARNING: {servers_down} servers are down! (Correct output is not guaranteed)")
+
     keypath = request.split(" ")[1:]
     request_to_send = request.encode()
     responses=[]
-    for sock in sock_list:
-        sock.sendall(request_to_send)
-        data = sock.recv(2048)
-        data_str = data.decode()
-        # if any(x in data_str for x in ["NO","OK"])==False:
-            # print(data_str)
-        responses.append(data_str)
+    for i,sock in enumerate(sock_list):
+        if server_list[i].isAlive() and sock.fileno()!=-1:
+            sock.sendall(request_to_send)
+            data = sock.recv(2048)
+            data_str = data.decode()
+            # if any(x in data_str for x in ["NO","OK"])==False:
+                # print(data_str)
+            responses.append(data_str)
     # print(responses)
-    if "DELETE" in command and "OK" in responses:
+    if len(responses)==0:
+        return -9
+    elif "DELETE" in command and "OK" in responses:
         print(f"'{request}' completed successfully!")
     elif "DELETE" in command and "OK" not in responses:
         print(f"'{request}' failed!")
@@ -135,31 +162,36 @@ def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list):
         # server_request(sock_list, command_to_send)
 
 
-def server_exit_request(socket_list):
-    for sock in socket_list:
-        sock.sendall(b"exit")
-        data = sock.recv(2048)
-        data_str = data.decode()
-        if data_str=="RIP":
-            # print(sock.getpeername())
-            print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} has left the chat\n")
+def server_exit_request(socket_list,server_list):
+    for i,sock in enumerate(socket_list):
+        if server_list[i].isAlive() and sock.fileno()!=-1:
+            sock.sendall(b"exit")
+            data = sock.recv(2048)
+            data_str = data.decode()
+            if data_str=="RIP":
+                # print(sock.getpeername())
+                print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} has left the chat\n")
 
 
-def query_time(sock_list):
+def query_time(sock_list,server_list,k_rand_servers):
     running = True
+    # sock_list[0].sendall(b"exit")
+    # sock_list[1].sendall(b"exit")
+    # sock_list[2].sendall(b"exit")
+
     while running:
-        user_input = input("\nInsert Query: ")
+        user_input = input("\nInsert Query (type 'exit' to quit): ")
         if "exit" in user_input.lower():
             # extra guard
             running = False
             break
         # elif "DELETE" in user_input:
         else:
-            server_request(sock_list,user_input)
+            server_request(sock_list,user_input,server_list,k_rand_servers)
         # request = user_input.split(" ")
             
 
-    server_exit_request(sock_list)
+    server_exit_request(sock_list,server_list)
     # for sock in sock_list:
     #     sock.shutdown(socket.SHUT_RDWR)
     #     sock.close()

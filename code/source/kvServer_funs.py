@@ -80,6 +80,7 @@ def GET_query(data,trie_server_dict):
         response=" "
     return response
 
+
 def DELETE_query(key,trie_server_dict):
     # print(f"\nDELETE request\n")
     # print(f"Data: {key}")
@@ -90,6 +91,7 @@ def DELETE_query(key,trie_server_dict):
     else:
         response="NO"
     return response
+
 
 def QUERY_query(data,trie_server_dict):
     # print(f"\nQUERY request\n")

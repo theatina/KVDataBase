@@ -276,6 +276,12 @@ def trie_delete_key(trie_dictionary,key):
 
     found_flag, value, key_node = trie_find_key(trie_dictionary,key)
     if found_flag==True:
+        key_node.end_of_word = False
+        key_node.istop_level_key = False
+        key_node.nested_keys = []
+        key_node.key = None
+        key_node.nested_trie = None
+
         temp_node = key_node
         while temp_node!=None:
             curr_node = temp_node
@@ -286,8 +292,11 @@ def trie_delete_key(trie_dictionary,key):
                     temp_node.children_nodes.remove(curr_node)
                 
                 del curr_node
+
+    
             # elif:
-                
+        found_flag, value, key_node = trie_find_key(trie_dictionary,key)
+        print(found_flag)     
             
     else:
         # print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
@@ -296,21 +305,35 @@ def trie_delete_key(trie_dictionary,key):
     return 9
 
 
-def trie_delete_key_nested(trie_dictionary,key):
-    found_flag, value, key_node = trie_find_key(trie_dictionary,key)
-    node = key_node
-    if found_flag==True:
-        while node.nested_trie:
-            pass
-        # trie_delete_key
-         
+# def trie_delete_key_nested(trie_dictionary,key):
+#     found_flag, value, key_node = trie_find_key(trie_dictionary,key)
+#     node = key_node
+#     nested_keys_trie = []
+#     if found_flag==True:
+#         while node.nested_trie:
 
-    else:
-        print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
-        return -9
+#             nested_keys_trie.append()
+        
+        
+#         # the final node - top level key
+#         trie_delete_key(trie_dictionary,key)
+
+#     else:
+#         # print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
+#         return -9
     
-    return 9
+#     return 9
 
+
+def delete_trie(trie_server_dict):
+    # for top_level_key in trie_server_dict.children_list:
+    #     while node.istop_level_key==False:
+    #         # node = 
+        
+    #     trie_delete_key_nested()
+    del trie_server_dict
+    
+    pass
 
 # def trie_print_words(trie_dictionary):
 #     temp_word = ""

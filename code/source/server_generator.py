@@ -3,6 +3,7 @@ import socket
 import threading
 import kvServer_funs as kvsf
 import customExceptions as ce
+import trie as tr
 
 class Server_Generator:
     
@@ -37,6 +38,7 @@ class Server_Generator:
                         conn.sendall(b"RIP")
                         conn.shutdown(socket.SHUT_RDWR)
                         conn.close()
+                        tr.delete_trie(trie_server_dict)
                         exit()
                 
                     try:

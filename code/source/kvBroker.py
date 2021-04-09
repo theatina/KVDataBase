@@ -32,4 +32,4 @@ for th in server_threads:
     
 socket_list = kvbf.server_sock_connection(server_threads)
 kvbf.send_data(server_threads,data,total_server_num,k_rand_servers,socket_list)
-kvbf.query_time(socket_list)
+kvbf.query_time(socket_list,server_threads,k_rand_servers)

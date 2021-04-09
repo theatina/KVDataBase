@@ -12,6 +12,7 @@ LT1200012
 import os
 import createData_funs as cdf
 
+print(f"\nCreating Data..\n")
 data_filepath = "../data/"
 keyfile_path = os.path.join(data_filepath,"keyFile.txt")
 dataToIndex_path =  os.path.join(data_filepath,"dataToIndex.txt")
