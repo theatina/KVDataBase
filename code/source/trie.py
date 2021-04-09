@@ -227,8 +227,12 @@ def trie_find_keypath_nested(trie_dict,keypath_list):
     elif len(keypath_list)>1:
         node = tl_key_node
         for key in keypath_list[1:]:
-            found,val,node = trie_find_key(node.nested_trie, key)
-    
+            if key in node.nested_keys:
+                found,val,node = trie_find_key(node.nested_trie, key)
+                if node==None:
+                    return False,{}
+            else:
+                return False,{}
     # print(node.key)
     val_dict = trie_get_value_nested(node)
     return val_dict!={},val_dict
@@ -245,7 +249,7 @@ def trie_find_key(trie_dictionary,key):
         # print(f"{children_chars}")
         for child_node in curr_node.children_nodes:
             if letter == child_node.character:
-                print(letter,child_node.character)
+                # print(letter,child_node.character)
                 curr_node=child_node
                 letter_found = True
                 break

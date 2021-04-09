@@ -96,8 +96,13 @@ def server_request(sock_list,request):
         if "NO" not in data_str:
             # print(data_str)
             responses.append(data_str)
-    print(responses)
-    print(responses[0])
+    # print(responses)
+    if responses.count(" ")==len(responses):
+        print("NOT FOUND")
+    else:
+        if " " in responses:
+            responses.remove(" ")
+            print(responses[0])
 
 
 def server_store(sock_list,request,sock_indices):

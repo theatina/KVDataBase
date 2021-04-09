@@ -64,11 +64,11 @@ class Server_Generator:
                         
                         # conn.sendall(b"OK")
                         
-                        if response=={}:
-                            data_to_send = b"NO"
-                        else:
-                            data_to_send = response.encode()
-                            
+                        # if response=={}:
+                        #     data_to_send = b"NO"
+                        # else:
+                        data_to_send = response.encode()
+
                         conn.sendall(data_to_send)
                         # if "exit" in data_str:
                         #     print(f"\nExiting world..\n")

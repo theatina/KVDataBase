@@ -73,7 +73,7 @@ def GET_query(data,trie_server_dict):
     if found:
         response = f"{key} : {val_dict}"
     else:
-        response={}
+        response=" "
     return response
 
 def DELETE_query(key,trie_server_dict):
@@ -109,5 +109,5 @@ def QUERY_query(data,trie_server_dict):
     if found:
         response = f"{data} : {val_dict}"
     else:
-        response={}
+        response=" "
     return response
