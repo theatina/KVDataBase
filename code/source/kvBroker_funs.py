@@ -103,10 +103,14 @@ def server_sock_connection_check(sock_list,server_list):
 
 def server_request(sock_list,request,server_list,k_rand_servers):
     command = request.split(" ")[0]
-    
+    # command = re.sub(r"\s+", "", command)
     servers_down = server_sock_connection_check(sock_list,server_list)
     # print(servers_down)
-    if "DELETE" in command and servers_down:
+    
+    if any(query in command for query in ["DELETE","GET","QUERY"])==False:
+        print(f"\nERROR: '{command}': Invalid query !")
+        return -9
+    elif "DELETE" in command and servers_down:
         print(f"\nCannot perform DELETE query with >=1 servers down!")
         return -9
     elif ("GET" in command or "QUERY" in command) and servers_down>=k_rand_servers:
@@ -127,17 +131,17 @@ def server_request(sock_list,request,server_list,k_rand_servers):
     if len(responses)==0:
         return -9
     elif "DELETE" in command and "OK" in responses:
-        print(f"'{request}' completed successfully!")
+        print(f"\n'{request}' completed successfully!")
     elif "DELETE" in command and "OK" not in responses:
-        print(f"'{request}' failed!")
+        print(f"\n'{request}' failed!\n(keypath '{request.split(' ',maxsplit=1)[1]}' not found or another problem occured)")
     elif responses.count(" ")==len(responses):
-        print(f"'{' '.join(keypath)}' NOT FOUND")
+        print(f"\n'{' '.join(keypath)}' NOT FOUND")
     else:
         responses = [i for i in responses if i!=" " and i!="OK" and i!="NO"]
         if len(responses)==0:
             return -9
         else:
-            print(responses[0])
+            print(f"\n{responses[0]}")
 
     return 9
 

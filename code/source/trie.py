@@ -158,7 +158,7 @@ def trie_insert_entry(trie_dictionary, entry_data_dictionary, keypath):
         
         nested_key_list=[]
         if type(entry_data_dictionary[key])==type(dict()):
-            print(key,list(entry_data_dictionary[key].keys()))
+            # print(key,list(entry_data_dictionary[key].keys()))
             nested_key_list = list(entry_data_dictionary[key].keys())
 
         trie_insert_keypaths(trie_dictionary, key, temp_keypath, istop_level_key, value, nested_key_list)
@@ -296,7 +296,7 @@ def trie_delete_key(trie_dictionary,key):
     
             # elif:
         found_flag, value, key_node = trie_find_key(trie_dictionary,key)
-        print(found_flag)     
+        # print(found_flag)     
             
     else:
         # print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
