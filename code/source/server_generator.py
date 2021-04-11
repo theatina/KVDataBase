@@ -8,7 +8,6 @@ import trie as tr
 class Server_Generator:
     
     def __init__(self,ip,port):
-        # self.id = id_num
         self.ip = ip
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,7 +28,7 @@ class Server_Generator:
                 while True:
                     data = conn.recv(2048)
                     data_str = data.decode()
-                    # print(f"port {self.port} receives '{data_str}'")
+
                     if not data:
                         break
 
@@ -44,6 +43,9 @@ class Server_Generator:
                     try:
                         data_row = data_str.split(" ",maxsplit=1)
                         
+                        if len(data_row)<2:
+                            raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
+                        
                         if "PUT" not in data_str:
 
                             # for i,dr in enumerate(data_row):
@@ -56,8 +58,7 @@ class Server_Generator:
                         # data_row = data_str.split(" ",maxsplit=1)
                         # print(data_row)
                         
-                        if len(data_row)<2:
-                            raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
+                        
                         # print(data_row)
                         # command = re.findall(r"[A-Z]+",data_row[0])[0]
                         command = data_row[0].rstrip(" ")
@@ -69,10 +70,12 @@ class Server_Generator:
                             kvsf.PUT_query(data_row[1],trie_server_dict)
                         elif command == "GET":
                             response = kvsf.GET_query(data_row[1],trie_server_dict)
+                            response = re.sub("'", "", response)
                         elif command == "DELETE":
                             response = kvsf.DELETE_query(data_row[1],trie_server_dict)
                         elif command == "QUERY":
                             response = kvsf.QUERY_query(data_row[1],trie_server_dict)
+                            response = re.sub("'", "", response)
                         else:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
                             # continue

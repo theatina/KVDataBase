@@ -33,10 +33,10 @@ class Trie_Node():
         self.nested_keys = []
         # value can be a set(empty/non-empty), string, float, int 
         self.value = None
-        self.value_list = []
-        self.value_type = type(self.value)
+        # self.value_list = []
+        # self.value_type = type(self.value)
         # dictionary with all the keypaths and their respective values
-        self.keypath_list = []
+        # self.keypath_list = []
 
         # if top/high - level key
         self.istop_level_key = False
@@ -53,7 +53,7 @@ class Trie_Node():
         self.key = None
         self.nested_keys = []
         self.value = None
-        self.value_type = None
+        # self.value_type = None
         self.keypath_list = []
         self.istop_level_key = False
         self.nested_trie = None
@@ -106,7 +106,7 @@ def trie_insert_key(trie_dictionary, key, value, istop_level_key):
     curr_node.end_of_word = True
     curr_node.istop_level_key = istop_level_key
     curr_node.key = key
-    insert_value(trie_dictionary,curr_node,value)
+    # insert_value(trie_dictionary,curr_node,value)
     return curr_node
 
 def trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value, nested_key_list):
@@ -169,10 +169,10 @@ def trie_insert_entry(trie_dictionary, entry_data_dictionary, keypath):
 
 def insert_nested_trie(node, data_dict):
     curr_node = node
-    # print(f"'{data_dict}'")
     if type(data_dict)!=type(dict()) or data_dict=={}:
         # print(data_dict)
         node.value = data_dict
+        # print(node.key,node.value)
         return -1
     
     curr_node.nested_trie = Trie_Node(".")
@@ -202,8 +202,9 @@ def data_indexing_from_file(trie_dict,filepath):
     lines = open(filepath,"r",encoding="utf-8").read().split("\n")
 
 def trie_get_value_nested(node):
-    if node.value != None and node.value!={}:
-        return node.value 
+    if node.value != None or node.value=={}:
+        # print(f"'{node.value}'")
+        return node.value
 
     # found = False
     # new_node = None
@@ -222,34 +223,35 @@ def trie_get_value_nested(node):
 def trie_find_keypath_nested(trie_dict,keypath_list):
     found,val,tl_key_node = trie_find_key(trie_dict, keypath_list[0])
     if tl_key_node==None:
-        return False,{}
+        return False,None
     if len(keypath_list)==1:
         val_dict = trie_get_value_nested(tl_key_node)
-        return val_dict!={},val_dict
+        return val_dict!=None,val_dict
     elif len(keypath_list)>1:
         node = tl_key_node
         for key in keypath_list[1:]:
             if key in node.nested_keys:
                 found,val,node = trie_find_key(node.nested_trie, key)
                 if node==None:
-                    return False,{}
+                    return False,None
             else:
-                return False,{}
+                return False,None
     # print(node.key)
     val_dict = trie_get_value_nested(node)
-    return val_dict!={},val_dict
+    return val_dict!=None,val_dict
 
 def trie_find_tl_key_nested(trie_dict,keypath_list):
     found,val,tl_key_node = trie_find_key(trie_dict, keypath_list[0])
     if tl_key_node==None:
-        return False,{}
+        return False,None
     val_dict = trie_get_value_nested(tl_key_node)
-    return val_dict!={},val_dict
+    return val_dict!=None,val_dict
 
 def trie_find_key(trie_dictionary,key):
     word_found = False
     curr_node = trie_dictionary
     value = None
+    node_found = None
 
     for letter in key:
         letter_found = False
@@ -268,8 +270,9 @@ def trie_find_key(trie_dictionary,key):
     if letter_found == True and curr_node.end_of_word == True:
         word_found = True
         value = curr_node.value
-    
-    return word_found, value, curr_node
+        node_found = curr_node
+
+    return word_found, value, node_found
 
 
 def trie_delete_key(trie_dictionary,key):
@@ -281,6 +284,7 @@ def trie_delete_key(trie_dictionary,key):
         key_node.nested_keys = []
         key_node.key = None
         key_node.nested_trie = None
+        key_node.value = None
 
         temp_node = key_node
         while temp_node!=None:
@@ -301,6 +305,7 @@ def trie_delete_key(trie_dictionary,key):
     else:
         # print(f"\nKey '{key}' was not found! ( DELETE failed )\n")
         return -9
+    
 
     return 9
 
