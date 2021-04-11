@@ -102,7 +102,16 @@ def server_sock_connection_check(sock_list,server_list):
 
 
 def server_request(sock_list,request,server_list,k_rand_servers):
-    command = request.split(" ")[0]
+    request = request.lstrip(" ")
+    request = request.rstrip(" ")
+    request_parts = request.split(" ",maxsplit=1)
+    # print(request_parts)
+    for i,part in enumerate(request_parts):
+        request_parts[i] = request_parts[i].lstrip(" ")
+        request_parts[i] = request_parts[i].rstrip(" ")
+    # print(request_parts)
+
+    command = request_parts[0]
     # command = re.sub(r"\s+", "", command)
     servers_down = server_sock_connection_check(sock_list,server_list)
     # print(servers_down)
@@ -133,9 +142,9 @@ def server_request(sock_list,request,server_list,k_rand_servers):
     elif "DELETE" in command and "OK" in responses:
         print(f"\n'{request}' completed successfully!")
     elif "DELETE" in command and "OK" not in responses:
-        print(f"\n'{request}' failed!\n(keypath '{request.split(' ',maxsplit=1)[1]}' not found or another problem occured)")
+        print(f"\n'{request}' failed!\n(keypath '{request_parts[1]}' not found or another problem occured)")
     elif responses.count(" ")==len(responses):
-        print(f"\n'{' '.join(keypath)}' NOT FOUND")
+        print(f"\n'{request_parts[1]}' NOT FOUND")
     else:
         responses = [i for i in responses if i!=" " and i!="OK" and i!="NO"]
         if len(responses)==0:
@@ -154,6 +163,7 @@ def server_store(sock_list,request,sock_indices):
 
 
 def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list):
+    time.sleep(1)
     print(f"\nStoring Data..\n")
     for i,row in enumerate(data):
         if i+1 in [len(data)//4,len(data)//3,len(data)//2,3*len(data)//4,len(data)]:

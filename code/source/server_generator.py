@@ -46,9 +46,11 @@ class Server_Generator:
                         
                         if "PUT" not in data_str:
 
-                            for i,dr in enumerate(data_row):
-                                data_row[i] = re.sub(r"\s+", "", data_row[i])
-                            data_row = [i for i in data_row if i!=""]
+                            # for i,dr in enumerate(data_row):
+                            #     data_row[i] = re.sub(r"\s+", "", data_row[i])
+                            # data_row = [i for i in data_row if i!=""]
+                            data_row[1] = data_row[1].rstrip(" ")
+                            data_row[1] = data_row[1].lstrip(" ")
                             # print(data_row)
                         
                         # data_row = data_str.split(" ",maxsplit=1)
@@ -57,7 +59,9 @@ class Server_Generator:
                         if len(data_row)<2:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
                         # print(data_row)
-                        command = re.findall(r"[A-Z]+",data_row[0])[0]
+                        # command = re.findall(r"[A-Z]+",data_row[0])[0]
+                        command = data_row[0].rstrip(" ")
+                        command = data_row[0].lstrip(" ")
                         # print(command)
                         # data_row[1] = re.sub(r"\s+","",data_row[1])
                         response = " "
