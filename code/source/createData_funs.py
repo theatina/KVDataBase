@@ -100,7 +100,7 @@ def create_value(key):
             val = round(val,2)
         elif get_key_type == "string":
             if "name" in key:
-                name_id = random.randint(0,len(name_list))
+                name_id = random.randint(0,len(name_list)-1)
                 val = name_list[name_id]
             else:
                 val = rand_str_generator()

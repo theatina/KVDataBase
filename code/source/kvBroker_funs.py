@@ -154,8 +154,10 @@ def server_store(sock_list,request,sock_indices):
 
 
 def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list):
- 
-    for row in data:
+    print(f"\nStoring Data..\n")
+    for i,row in enumerate(data):
+        if i+1 in [len(data)//4,len(data)//3,len(data)//2,3*len(data)//4,len(data)]:
+            print(f"{(i+1)*100//len(data)}% of data stored..")
         sock_indices = random.sample(range(0,total_server_num),k_rand_servers)
         # print(sock_indices)
         # print(data)
@@ -176,6 +178,7 @@ def server_exit_request(socket_list,server_list):
                 # print(sock.getpeername())
                 print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} has left the chat\n")
 
+    print(f"\nExiting..\n")
 
 def query_time(sock_list,server_list,k_rand_servers):
     running = True
