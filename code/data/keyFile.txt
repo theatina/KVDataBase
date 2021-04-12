@@ -18,3 +18,10 @@ GPA float
 pets int
 favouriteMovie string
 pc string
+houseSize float
+idNum int
+phoneNumber int
+kids int
+nationality string
+SocialSecurityNumber int
+bankAccountId int
