@@ -25,8 +25,13 @@ class Server_Generator:
 
             with conn:
                 print(f"Server with ip '{self.ip}' and port '{self.port}': Connected by", addr)
+                max_buff_size = 2048
+                data = conn.recv(max_buff_size)
+                data_str = data.decode()
+                max_buff_size = int(data_str)
+
                 while True:
-                    data = conn.recv(2048)
+                    data = conn.recv(max_buff_size)
                     data_str = data.decode()
 
                     if not data:

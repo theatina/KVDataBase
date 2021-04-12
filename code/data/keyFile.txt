@@ -17,3 +17,4 @@ palmSize float
 GPA float
 pets int
 favouriteMovie string
+pc string

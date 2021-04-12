@@ -10,6 +10,9 @@ import os
 import customExceptions as ce
 
 def input_check(args):
+    data_filepath = "../data/"
+    keyfile_name = "keyFile.txt"
+    keyfile_path = os.path.join(data_filepath, keyfile_name)
     
     try:
         if not os.path.exists(args.k):
@@ -22,6 +25,15 @@ def input_check(args):
             raise ce.UsrInputError(f"\nERROR: Max number of keys must be > 0 ( '{args.m}' value was given )\n")
         if args.l < 1:
             raise ce.UsrInputError(f"\nERROR: Max string length must be > 0 ( '{args.l}' value was given )\n")
+
+        with open(keyfile_path,"r",encoding="utf-8") as reader:
+            unique_keys = len(reader.read().strip().split("\n"))
+        
+        if args.m > unique_keys:
+            raise ce.UsrInputError(f"\nERROR: Max number of keys/level must be <= unique keys in '{keyfile_name}' ( '{args.m}' value was given > {unique_keys} unique keys in file )\n")
+
+        if args.d > 1000:
+            raise ce.UsrInputError(f"\nERROR: Max nesting level must be <= 1000 ( '{args.d}' value was given )\n")
 
     except ce.UsrInputError as err:
         print(err.args[0])
@@ -49,8 +61,10 @@ def arg_parsing(keyfile_path):
 key_type_dict,all_key_types_dict = {},{}
 def key_dictionaries(keyfile_path):
     global key_type_dict,all_key_types_dict
-
-    key_n_type = [ tuple(k.split(" ")) for k in open(keyfile_path,"r",encoding="utf-8").read().split("\n") ]
+    
+    key_file = open(keyfile_path,"r",encoding="utf-8").read().split("\n")
+    
+    key_n_type = [ tuple(k.split(" ")) for k in key_file if len(k.split(" "))==2 ]
     key_n_type = sorted(key_n_type, key = lambda y:y[1])
     key_type_dict = {kt[0]:kt[1] for kt in key_n_type }
     group_fun = lambda f: f[1]   

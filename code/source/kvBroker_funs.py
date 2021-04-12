@@ -155,16 +155,47 @@ def server_request(sock_list,request,server_list,k_rand_servers):
     return 9
 
 
-def server_store(sock_list,request,sock_indices):
+def server_store(sock_list,request,sock_indices,max_buff_size):
     request = request.encode()
     for sock_ind in sock_indices:
         sock_list[sock_ind].sendall(request)
-        data = sock_list[sock_ind].recv(2048)
+        data = sock_list[sock_ind].recv(max_buff_size)
         # data_str = data.decode()
 
+def calculate_max_msg_size(data):
+    max_real_size = max([len(row) for row in data])
+    diff = 2**10-max_real_size
+    counter = 10
+    while diff<=0:
+        min_diff = diff
+        counter+=1
+        diff = 2**counter-max_real_size
 
-def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list):
+
+    # p_of_2_diff = [ 2**i-max_real_size if 2**i-max_real_size>0 else 0 for i in range(10,20)  ]
+    p_of_2_size = 2**counter 
+    print(p_of_2_size)
+    
+    return p_of_2_size
+
+def send_max_size(sock_list,server_list,max_buff_size):
+    servers_down = server_sock_connection_check(sock_list,server_list)
+    if servers_down==len(server_list):
+        print(f"\nFATAL ERROR: All servers are down !!")
+        server_exit_request(sock_list,server_list,max_buff_size)
+        exit()
+    
+    max_size_to_send = str(max_buff_size).encode()
+    for i,sock in enumerate(sock_list):
+        if server_list[i].isAlive() and sock.fileno()!=-1:
+            sock.sendall(max_size_to_send)
+            # data = sock.recv(2048)
+            # data_str = data.decode()
+
+def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_buff_size):
     time.sleep(1)
+    send_max_size(sock_list,server_threads,max_buff_size)
+    
     print(f"\nStoring Data..\n")
     for i,row in enumerate(data):
         if i+1 in [len(data)//4,len(data)//3,len(data)//2,3*len(data)//4,len(data)]:
@@ -173,22 +204,23 @@ def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list):
         sock_indices = random.sample(range(0,total_server_num),k_rand_servers)
         command_data_sep = " "
         data_to_send = 'PUT' + command_data_sep + row
-        print(sock_indices)
-        server_store(sock_list,data_to_send,sock_indices)
+        # print(sock_indices)
+        server_store(sock_list,data_to_send,sock_indices,max_buff_size)
+    
 
 
-def server_exit_request(socket_list,server_list):
+def server_exit_request(socket_list,server_list,max_buff_size):
     for i,sock in enumerate(socket_list):
         if server_list[i].isAlive() and sock.fileno()!=-1:
             sock.sendall(b"exit")
-            data = sock.recv(2048)
+            data = sock.recv(max_buff_size)
             data_str = data.decode()
             if data_str=="RIP":
                 print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} has left the chat\n")
 
     print(f"\nExiting..\n")
 
-def query_time(sock_list,server_list,k_rand_servers):
+def query_time(sock_list,server_list,k_rand_servers,max_buff_size):
     running = True
     # sock_list[0].sendall(b"exit")
     # sock_list[1].sendall(b"exit")
@@ -198,19 +230,19 @@ def query_time(sock_list,server_list,k_rand_servers):
         servers_down = server_sock_connection_check(sock_list,server_list)
         if servers_down==len(server_list):
             print(f"\nFATAL ERROR: All servers are down!\n({servers_down} servers)")
-            server_exit_request(sock_list,server_list)
+            server_exit_request(sock_list,server_list,max_buff_size)
             return -8
 
         user_input = input("\nInsert Query (type 'exit' to quit): ")
         if "exit" in user_input.lower():
             # extra guard
             running = False
-            server_exit_request(sock_list,server_list)
+            server_exit_request(sock_list,server_list,max_buff_size)
             return 9
         else:
             err_code = server_request(sock_list,user_input,server_list,k_rand_servers)
             if err_code==-8:
-                server_exit_request(sock_list,server_list)
+                server_exit_request(sock_list,server_list,max_buff_size)
                 running = False
                 return -9
            

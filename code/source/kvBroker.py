@@ -31,5 +31,8 @@ for th in server_threads:
     threads_exited = True
     
 socket_list = kvbf.server_sock_connection(server_threads)
-kvbf.send_data(server_threads,data,total_server_num,k_rand_servers,socket_list)
-kvbf.query_time(socket_list,server_threads,k_rand_servers)
+max_buff_size = kvbf.calculate_max_msg_size(data)
+print(max_buff_size)
+# max_buff_size = 2048
+kvbf.send_data(server_threads,data,total_server_num,k_rand_servers,socket_list,max_buff_size)
+kvbf.query_time(socket_list,server_threads,k_rand_servers,max_buff_size)
