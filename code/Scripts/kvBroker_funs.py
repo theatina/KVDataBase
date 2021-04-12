@@ -24,7 +24,6 @@ def input_check(args):
         
         with open(args.s,"r",encoding="utf-8") as reader:
             servers = len(reader.read().split("\n"))
-            print(servers)
             if args.k > servers:
                 raise ce.UsrInputError(f"\nERROR: Random servers number({args.k}) must be <= total servers number({servers}) !!\n")
 
@@ -38,7 +37,7 @@ def arg_parsing(serverFile_path,dataToIndex_path):
     # Command: kvBroker -s serverFile.txt -i dataToIndex.txt -k 2    
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", type=str, default=serverFile_path, help=" Server ip-port list ")
-    parser.add_argument("-i", type=str, default=dataToIndex_path, help=" Data ")
+    parser.add_argument("-i", type=str, default=dataToIndex_path, help=" Data to store")
     parser.add_argument("-k", type=int, default=2, help=" Pick random k servers ")
     args = parser.parse_args()
     input_check(args)
@@ -47,13 +46,8 @@ def arg_parsing(serverFile_path,dataToIndex_path):
 
 
 def read_file(filepath):
-    data = open(filepath,"r",encoding="utf-8").read()
-    data = re.sub(r"\n\s+","\n",data)
-    data = re.sub(r"\n$","",data)
-    data = data.split("\n")
-
+    data = open(filepath,"r",encoding="utf-8").read().strip().split("\n")
     return data
-
 
 
 def thread_fun(ip,port):
@@ -162,6 +156,7 @@ def server_store(sock_list,request,sock_indices,max_buff_size):
         data = sock_list[sock_ind].recv(max_buff_size)
         # data_str = data.decode()
 
+
 def calculate_max_msg_size(data):
     max_real_size = max([len(row) for row in data])
     diff = 2**10-max_real_size
@@ -174,9 +169,9 @@ def calculate_max_msg_size(data):
 
     # p_of_2_diff = [ 2**i-max_real_size if 2**i-max_real_size>0 else 0 for i in range(10,20)  ]
     p_of_2_size = 2**counter 
-    print(p_of_2_size)
     
     return p_of_2_size
+
 
 def send_max_size(sock_list,server_list,max_buff_size):
     servers_down = server_sock_connection_check(sock_list,server_list)
@@ -192,6 +187,7 @@ def send_max_size(sock_list,server_list,max_buff_size):
             # data = sock.recv(2048)
             # data_str = data.decode()
 
+
 def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_buff_size):
     time.sleep(1)
     send_max_size(sock_list,server_threads,max_buff_size)
@@ -204,7 +200,6 @@ def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_
         sock_indices = random.sample(range(0,total_server_num),k_rand_servers)
         command_data_sep = " "
         data_to_send = 'PUT' + command_data_sep + row
-        # print(sock_indices)
         server_store(sock_list,data_to_send,sock_indices,max_buff_size)
     
 
@@ -247,5 +242,3 @@ def query_time(sock_list,server_list,k_rand_servers,max_buff_size):
                 return -9
            
                     
-    
-        
