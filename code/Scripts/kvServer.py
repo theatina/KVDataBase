@@ -29,5 +29,6 @@ port = int(args.p)
 # Root node of the trie structured server database
 trie_server_dict = tr.Trie_Node(".")
 
+# creates a server instance and starts it
 s = sg.Server_Generator(ip,port)
 s.startserver(trie_server_dict)

@@ -23,7 +23,10 @@ import customExceptions as ce
 from collections import Counter
 
 def input_check(args):
+    ''' 
     
+    '''
+
     try:
         if not os.path.exists(args.s):
             raise ce.UsrInputError(f"\nERROR: File '{args.s}' does not exist!!\n") 
@@ -43,6 +46,9 @@ def input_check(args):
 
 
 def arg_parsing(serverFile_path,dataToIndex_path):
+    ''' 
+    
+    '''
     
     # Command: kvBroker -s serverFile.txt -i dataToIndex.txt -k 2    
     parser = argparse.ArgumentParser()
@@ -56,15 +62,27 @@ def arg_parsing(serverFile_path,dataToIndex_path):
 
 
 def read_file(filepath):
+    ''' 
+    
+    '''
+
     data = open(filepath,"r",encoding="utf-8").read().strip().split("\n")
     return data
 
 
 def thread_fun(ip,port):
+    ''' 
+    
+    '''
+
     # kvServer -a ip_address -p port
     call(["python3", "kvServer.py", "-a", ip, "-p", port])
 
 def server_connection(serverFile_path):
+    ''' 
+    
+    '''
+
     servers = read_file(serverFile_path)
     server_ip_port = [ (ip_port.split(" ")[0],ip_port.split(" ")[1]) for ip_port in servers]
     
@@ -72,12 +90,16 @@ def server_connection(serverFile_path):
     threads = []
     for ip,port in server_ip_port:
         threads.append(threading.Thread(target=thread_fun,args=(ip,port)))
-
+        threads[-1].setName(f"Server_{ip}:{port}")
 
     return len(server_ip_port),threads
 
 
 def server_sock_connection(server_list):
+    ''' 
+    
+    '''
+
     sock_list = []
     for i,server in enumerate(server_list):
         sock_list.append(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
@@ -85,7 +107,12 @@ def server_sock_connection(server_list):
 
     return sock_list
 
+
 def server_sock_connection_check(sock_list,server_list):
+    ''' 
+    
+    '''
+
     servers_down = 0
 
     for i,server in enumerate(server_list):
@@ -103,9 +130,11 @@ def server_sock_connection_check(sock_list,server_list):
 
 
 def server_request(sock_list,request,server_list,k_rand_servers):
+    ''' 
+    
+    '''
+
     request = re.sub(r"\s+", " ", request)
-    # request = request.lstrip(" ")
-    # request = request.rstrip(" ")
     request_parts = request.strip().split(" ",maxsplit=1)
 
     for i,part in enumerate(request_parts):
@@ -140,7 +169,7 @@ def server_request(sock_list,request,server_list,k_rand_servers):
     request_to_send = " ".join(request_parts).encode()
     responses = []
     for i,sock in enumerate(sock_list):
-        if server_list[i].isAlive() and sock.fileno()!=-1:
+        if server_list[i].is_alive() and sock.fileno()!=-1:
             sock.sendall(request_to_send)
             data = sock.recv(2048)
             data_str = data.decode()
@@ -175,6 +204,10 @@ def server_request(sock_list,request,server_list,k_rand_servers):
 
 
 def server_store(sock_list,request,sock_indices,max_buff_size):
+    ''' 
+    
+    '''
+
     request = request.encode()
     for sock_ind in sock_indices:
         sock_list[sock_ind].sendall(request)
@@ -183,6 +216,10 @@ def server_store(sock_list,request,sock_indices,max_buff_size):
 
 
 def calculate_max_msg_size(data):
+    ''' 
+    
+    '''
+
     max_real_size = max([len(row) for row in data])
     diff = 2**10-max_real_size
     counter = 10
@@ -191,14 +228,16 @@ def calculate_max_msg_size(data):
         counter+=1
         diff = 2**counter-max_real_size
 
-
-    # p_of_2_diff = [ 2**i-max_real_size if 2**i-max_real_size>0 else 0 for i in range(10,20)  ]
     p_of_2_size = 2**counter 
     
     return p_of_2_size
 
 
 def send_max_size(sock_list,server_list,max_buff_size):
+    ''' 
+    
+    '''
+
     servers_down = server_sock_connection_check(sock_list,server_list)
     if servers_down==len(server_list):
         print(f"\nFATAL ERROR: All servers are down !!")
@@ -207,13 +246,17 @@ def send_max_size(sock_list,server_list,max_buff_size):
     
     max_size_to_send = str(max_buff_size).encode()
     for i,sock in enumerate(sock_list):
-        if server_list[i].isAlive() and sock.fileno()!=-1:
+        if server_list[i].is_alive() and sock.fileno()!=-1:
             sock.sendall(max_size_to_send)
             # data = sock.recv(2048)
             # data_str = data.decode()
 
 
 def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_buff_size):
+    ''' 
+    
+    '''
+
     time.sleep(1)
     send_max_size(sock_list,server_threads,max_buff_size)
     
@@ -230,8 +273,12 @@ def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_
 
 
 def server_exit_request(socket_list,server_list,max_buff_size):
+    ''' 
+    
+    '''
+
     for i,sock in enumerate(socket_list):
-        if server_list[i].isAlive() and sock.fileno()!=-1:
+        if server_list[i].is_alive() and sock.fileno()!=-1:
             sock.sendall(b"exit")
             data = sock.recv(max_buff_size)
             data_str = data.decode()
@@ -241,8 +288,14 @@ def server_exit_request(socket_list,server_list,max_buff_size):
     print(f"\nExiting..\n")
 
 def query_time(sock_list,server_list,k_rand_servers,max_buff_size):
+    ''' 
+    
+    '''
+
     running = True
-    # sock_list[0].sendall(b"exit")
+    print(f"\nKILLING {server_list[9].getName()}")
+    sock_list[9].sendall(b"exit")
+    time.sleep(1)
     # sock_list[1].sendall(b"exit")
     # sock_list[2].sendall(b"exit")
 

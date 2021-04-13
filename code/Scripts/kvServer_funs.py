@@ -13,6 +13,10 @@ import trie as tr
 
 
 def json_to_dict(data):
+    '''
+    Conversion of an entry into dictionary format using jason
+    '''
+
     temp_data_dict = {}
     if data!="{}":
         if ";" in data:
@@ -26,8 +30,11 @@ def json_to_dict(data):
 
 
 def PUT_query(data,trie_server_dict):
+    '''
+    Transforms the data row (entry) into a dictionary and calls the "nested_trie()" function to insert the entry in the trie structure of the server (database)
+    '''
+    
     data_dict = json_to_dict(data)
-
     # nested trie
     tr.nested_trie(trie_server_dict, data_dict) 
     
@@ -35,6 +42,10 @@ def PUT_query(data,trie_server_dict):
 
 
 def DELETE_query(key,trie_server_dict):
+    '''
+    Deletes the top level key "key" from the server's trie structure (database) and returns the appropriate message to send it to the Broker as a response to the DELETE query
+    '''
+    
     key = re.sub("[\"']", "", key)
     success = tr.trie_delete_key(trie_server_dict, key)
     if success==9:
@@ -45,6 +56,10 @@ def DELETE_query(key,trie_server_dict):
 
 
 def GET_query(data,trie_server_dict):
+    '''
+    Top level key value retrieval - if the key is in the trie structure of the certain server
+    '''
+    
     data = re.sub("[\"']", "", data)
     data.rstrip(" ")
     data.lstrip(" ")
@@ -62,12 +77,15 @@ def GET_query(data,trie_server_dict):
 
 
 def QUERY_query(data,trie_server_dict):
+    '''
+    Returns the value (single value or set of key-value pairs) of the keypath given using the "trie_find_keypath_nested()" function of the trie structure described in "trie.py"
+    '''
+    
     key_path = data.split(".")
     for i,k in enumerate(key_path):
         key_path[i] = key_path[i].rstrip(" ")
         key_path[i] = key_path[i].lstrip(" ")
     
-    key = key_path[0]
     found,val_dict = tr.trie_find_keypath_nested(trie_server_dict, key_path)
 
     if found:
