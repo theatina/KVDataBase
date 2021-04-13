@@ -20,9 +20,7 @@ namesTextFile_path =  os.path.join(data_filepath,"nameFile.txt")
 keyfile_path,file_lines = cdf.arg_parsing(keyfile_path)
 cdf.key_dictionaries(keyfile_path)
 
-# Creates the entry file
-data2index = open(dataToIndex_path,"w+",encoding="utf-8")
-cdf.create_entry_file(file_lines,data2index,namesTextFile_path)
-data2index.close()
+# Creates the entry data file
+cdf.create_entry_file(file_lines,dataToIndex_path,namesTextFile_path)
 
 exit()

@@ -26,52 +26,8 @@ args = parser.parse_args()
 ip = args.a
 port = int(args.p)
 
+# Root node of the trie structured server database
 trie_server_dict = tr.Trie_Node(".")
 
 s = sg.Server_Generator(ip,port)
 s.startserver(trie_server_dict)
-
-
-# HOST = ip           # Standard loopback interface address (localhost)
-# PORT = port         # Port to listen on (non-privileged ports are > 1023)
-
-# with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-#     s.bind((HOST, PORT))
-#     s.listen()
-#     conn, addr = s.accept()
-#     with conn:
-#         print('Connected by', addr)
-#         while True:
-#             data = conn.recv(1024)
-#             if not data:
-#                 break
-#             conn.sendall(data)
-
-
-
-
-
-'''
-# temp_list = ["theatina", "doyouevenexist", "no", "piano"]
-
-temp = ["abchsdf", "lalal", "sham", "shame", "wax", "bear", "bell", "bid", "bull", "buy", "sell", "stock", "stop", "theatina"]
-
-trie_dictionary = tr.Trie_Node(".")
-
-value = None
-top_level_key = False
-for word in temp:
-    tr.trie_insert_key(trie_dictionary,word,value,top_level_key)
-
-for i,word in enumerate(temp):
-    if_found,sth = tr.trie_find_key(trie_dictionary,word)
-    if if_found == True :
-        found = "Found"
-    else:
-        found = "Not found"
-
-    print(f"{i}. {word}: {found}")
-
-# trie_dictionary.print_trie()
-
-'''

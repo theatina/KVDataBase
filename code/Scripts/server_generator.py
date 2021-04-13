@@ -15,7 +15,10 @@ import customExceptions as ce
 import trie as tr
 
 class Server_Generator:
-    
+    ''' 
+    server class that represents a server with its methods used to start/maintain/stop the connection and exit the thread 
+    '''
+
     def __init__(self,ip,port):
         self.ip = ip
         self.port = port
@@ -27,13 +30,13 @@ class Server_Generator:
         self.trie_dictionary = None
 
     def startserver(self,trie_server_dict):
-        print(f"\nServer: Hi, my ip is: {self.ip} and port: {self.port}")
+        # print(f"\nServer: Hi, my ip is: {self.ip} and port: {self.port}")
         while True:
             self.socket.listen()
             conn, addr = self.socket.accept()
 
             with conn:
-                print(f"Server with ip '{self.ip}' and port '{self.port}': Connected by", addr)
+                print(f"Server with ip '{self.ip}' and port '{self.port}': connection established")
                 max_buff_size = 2048
                 data = conn.recv(max_buff_size)
                 data_str = data.decode()
@@ -57,13 +60,9 @@ class Server_Generator:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
                         
                         if "PUT" not in data_str:
+                            data_row[1] = data_row[1].strip()
+                            # data_row[1] = data_row[1].lstrip(" ")
 
-                            # for i,dr in enumerate(data_row):
-                            #     data_row[i] = re.sub(r"\s+", "", data_row[i])
-                            # data_row = [i for i in data_row if i!=""]
-                            data_row[1] = data_row[1].rstrip(" ")
-                            data_row[1] = data_row[1].lstrip(" ")
-                            # print(data_row)
                         
                         command = data_row[0].strip()
                         response = " "

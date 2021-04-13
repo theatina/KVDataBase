@@ -103,13 +103,15 @@ def server_sock_connection_check(sock_list,server_list):
 
 
 def server_request(sock_list,request,server_list,k_rand_servers):
-    request = re.sub("\s+", " ", request)
+    request = re.sub(r"\s+", " ", request)
     # request = request.lstrip(" ")
     # request = request.rstrip(" ")
     request_parts = request.strip().split(" ",maxsplit=1)
 
     for i,part in enumerate(request_parts):
-        request_parts[i] = request_parts[i].strip(r"\s")
+        request_parts[i] = request_parts[i].strip(" ")
+        request_parts[i] = request_parts[i].strip(r"\"")
+        request_parts[i] = request_parts[i].strip(r"'")
     
     command = request_parts[0]
     servers_down = server_sock_connection_check(sock_list,server_list)
@@ -251,7 +253,7 @@ def query_time(sock_list,server_list,k_rand_servers,max_buff_size):
             server_exit_request(sock_list,server_list,max_buff_size)
             return -8
 
-        user_input = input("\nInsert Query (type 'exit' to quit): ")
+        user_input = input("\n\nInsert Query (type 'exit' to quit): ")
         if "exit" in user_input.lower():
             # extra guard
             running = False

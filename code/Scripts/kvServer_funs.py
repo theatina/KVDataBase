@@ -24,6 +24,7 @@ def json_to_dict(data):
 
     return temp_data_dict
 
+
 def PUT_query(data,trie_server_dict):
     data_dict = json_to_dict(data)
 
@@ -31,6 +32,7 @@ def PUT_query(data,trie_server_dict):
     tr.nested_trie(trie_server_dict, data_dict) 
     
     return 9
+
 
 def DELETE_query(key,trie_server_dict):
     key = re.sub("[\"']", "", key)
@@ -46,8 +48,6 @@ def GET_query(data,trie_server_dict):
     data = re.sub("[\"']", "", data)
     data.rstrip(" ")
     data.lstrip(" ")
-    # for i,k in enumerate(key_path):
-    #     key_path[i] = re.findall(r"[a-zA-Z\.\d]+", key_path[i])[0]
     
     key = data
 
@@ -66,7 +66,6 @@ def QUERY_query(data,trie_server_dict):
     for i,k in enumerate(key_path):
         key_path[i] = key_path[i].rstrip(" ")
         key_path[i] = key_path[i].lstrip(" ")
-        # key_path[i] = re.findall(r"[a-zA-Z\.\d]+", key_path[i])[0]
     
     key = key_path[0]
     found,val_dict = tr.trie_find_keypath_nested(trie_server_dict, key_path)
