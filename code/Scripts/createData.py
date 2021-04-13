@@ -16,16 +16,13 @@ keyfile_path = os.path.join(data_filepath,"keyFile.txt")
 dataToIndex_path =  os.path.join(data_filepath,"dataToIndex.txt")
 namesTextFile_path =  os.path.join(data_filepath,"nameFile.txt")
 
+# Input checks
 keyfile_path,file_lines = cdf.arg_parsing(keyfile_path)
 cdf.key_dictionaries(keyfile_path)
 
-# create data file
+# Creates the entry file
 data2index = open(dataToIndex_path,"w+",encoding="utf-8")
-cdf.save_names(namesTextFile_path)
-
-for line in range(file_lines):
-    row_data = cdf.data_row_creation(line)
-    data2index.write(row_data)
-
+cdf.create_entry_file(file_lines,data2index,namesTextFile_path)
 data2index.close()
+
 exit()

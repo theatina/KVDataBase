@@ -174,3 +174,9 @@ def data_row_creation(line_num):
     data_row = textfile_modifications(data_row,value)
 
     return data_row
+
+def create_entry_file(file_lines,data2index,namesTextFile_path):
+    save_names(namesTextFile_path)
+    for line in range(file_lines):
+        row_data = data_row_creation(line)
+        data2index.write(row_data)

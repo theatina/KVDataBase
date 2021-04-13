@@ -218,7 +218,7 @@ def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_
     print(f"\nStoring Data..\n")
     for i,row in enumerate(data):
         if i+1 in [len(data)//4,len(data)//3,len(data)//2,3*len(data)//4,len(data)]:
-            print(f"{(i+1)*100//len(data)}% of data stored..")
+            print(f"{(i+1)*100//len(data)}% of the data is stored..")
         
         sock_indices = random.sample(range(0,total_server_num),k_rand_servers)
         command_data_sep = " "
