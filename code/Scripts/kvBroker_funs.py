@@ -1,3 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+'''
+Christina-Theano Kylafi
+M111 - Big Data
+LT1200012
+'''
+
 import re 
 import argparse
 import itertools
@@ -94,33 +103,39 @@ def server_sock_connection_check(sock_list,server_list):
 
 
 def server_request(sock_list,request,server_list,k_rand_servers):
-    request = request.lstrip(" ")
-    request = request.rstrip(" ")
-    request_parts = request.split(" ",maxsplit=1)
+    request = re.sub("\s+", " ", request)
+    # request = request.lstrip(" ")
+    # request = request.rstrip(" ")
+    request_parts = request.strip().split(" ",maxsplit=1)
 
     for i,part in enumerate(request_parts):
-        request_parts[i] = request_parts[i].lstrip(" ")
-        request_parts[i] = request_parts[i].rstrip(" ")
-
+        request_parts[i] = request_parts[i].strip(r"\s")
+    
     command = request_parts[0]
     servers_down = server_sock_connection_check(sock_list,server_list)
-    if servers_down==len(server_list):
+    if len(request_parts)<2 and (any(query == command for query in ["DELETE","GET","QUERY"])==False):
+        print(f"\nERROR: '{request_parts[0]}': Invalid syntax !\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
+        return -9
+    elif len(request_parts)<2:
+        print(f"\nERROR: '{request_parts[0]}': Invalid syntax ! (missing arguments)\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
+        return -9
+    elif len(request_parts[1].split(" "))>1:
+        print(f"\nERROR: '{' '.join(request_parts)}': Invalid syntax ! (too many arguments)\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
+        return -9
+    elif servers_down==len(server_list):
         print(f"\nFATAL ERROR: All servers are down!\n({servers_down} servers)")
         return -8
     elif any(query == command for query in ["DELETE","GET","QUERY"])==False:
-        print(f"\nERROR: '{command}': Invalid query !")
+        print(f"\nERROR: '{command}': Invalid query !\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
         return -9
     elif command == "DELETE" and servers_down:
         print(f"\nCannot perform DELETE query with >=1 servers down!")
         return -9
     elif (command == "GET" or command == "QUERY") and servers_down>=k_rand_servers:
         print(f"\nWARNING: {servers_down} servers are down! (Correct output is not guaranteed)")
-    elif len(request_parts)<2:
-        print(f"\nERROR: '{request}': Invalid query ! (arguments missing)")
-        return -9
 
 
-    request_to_send = request.encode()
+    request_to_send = " ".join(request_parts).encode()
     responses = []
     for i,sock in enumerate(sock_list):
         if server_list[i].isAlive() and sock.fileno()!=-1:
@@ -129,15 +144,16 @@ def server_request(sock_list,request,server_list,k_rand_servers):
             data_str = data.decode()
 
             responses.append(data_str)
+            # In case we wanted to stop at the first server entry retrieval 
             # if data_str not in ["OK"," ","NO"]:
             #     break
 
     if len(responses)==0:
         return -9
     elif command == "DELETE" and "OK" in responses:
-        print(f"\n'{request}' completed successfully!")
+        print(f"\n'{command} {request_parts[1]}' completed successfully!")
     elif  command == "DELETE" and "OK" not in responses:
-        print(f"\n'{request}' failed!\n(key '{request_parts[1]}' not found or another problem occured)")
+        print(f"\n'{command} {request_parts[1]}' failed!\n(key '{request_parts[1]}' not found or another problem occured)")
     elif responses.count(" ")==len(responses):
         print(f"\n'{request_parts[1]}' NOT FOUND")
     else:
@@ -147,10 +163,10 @@ def server_request(sock_list,request,server_list,k_rand_servers):
         else:
             diff_responses = Counter(responses).keys()
             if len(diff_responses)>1:
-                print(f"\n{len(diff_responses)} different entries were found:")
+                print(f"\n{len(diff_responses)} different entries were retrieved:")
                 for i,entry in enumerate(diff_responses):
                     print(f"\n{i+1}. {entry}")
-            else:
+            elif len(diff_responses)==1:
                 print(f"\n{responses[0]}")
 
     return 9

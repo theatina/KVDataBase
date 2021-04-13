@@ -1,3 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+'''
+Christina-Theano Kylafi
+M111 - Big Data
+LT1200012
+'''
+
 import re 
 import socket
 import threading
@@ -38,12 +47,8 @@ class Server_Generator:
                         break
 
                     if "exit" in data_str:
-                        print(f"\n{self.ip}:{self.port} : Bye Bye world..")
-                        conn.sendall(b"RIP")
-                        conn.shutdown(socket.SHUT_RDWR)
-                        conn.close()
-                        tr.delete_trie(trie_server_dict)
-                        exit()
+                        self.stop_server(conn)
+                        self.kill_thread(trie_server_dict)
                 
                     try:
                         data_row = data_str.split(" ",maxsplit=1)
@@ -60,16 +65,7 @@ class Server_Generator:
                             data_row[1] = data_row[1].lstrip(" ")
                             # print(data_row)
                         
-                        # data_row = data_str.split(" ",maxsplit=1)
-                        # print(data_row)
-                        
-                        
-                        # print(data_row)
-                        # command = re.findall(r"[A-Z]+",data_row[0])[0]
-                        command = data_row[0].rstrip(" ")
-                        command = data_row[0].lstrip(" ")
-                        # print(command)
-                        # data_row[1] = re.sub(r"\s+","",data_row[1])
+                        command = data_row[0].strip()
                         response = " "
                         if command == "PUT":
                             kvsf.PUT_query(data_row[1],trie_server_dict)
@@ -83,28 +79,24 @@ class Server_Generator:
                             response = re.sub("'", "", response)
                         else:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
-                            # continue
-                    
-                        
-                        
-                        # conn.sendall(b"OK")
-                        
-                        # if response=={}:
-                        #     data_to_send = b"NO"
-                        # else:
+  
                         data_to_send = response.encode()
-
                         conn.sendall(data_to_send)
-                        # if "exit" in data_str:
-                        #     print(f"\nExiting world..\n")
-                        #     conn.shutdown(socket.SHUT_RDWR)
-                        #     conn.close()
-                        #     return 9
                         
                     except ce.QueryError as err:
                         print(f"\nServer {self.ip}:{self.port} : {err.args[0]}")
                         conn.sendall(b"NO")
                     
-                    
+
+    def stop_server(self,conn):
+        print(f"\n{self.ip}:{self.port} : Bye Bye world..")
+        conn.sendall(b"RIP")
+        conn.shutdown(socket.SHUT_RDWR)
+        conn.close()
+       
+
+    def kill_thread(self,trie_server_dict):
+        tr.delete_trie(trie_server_dict)
+        exit()
             
             

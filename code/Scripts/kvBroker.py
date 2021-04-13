@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 '''
- 
 Christina-Theano Kylafi
 M111 - Big Data
 LT1200012
-
 '''
+
 import os
 import kvBroker_funs as kvbf
 import trie as tr
