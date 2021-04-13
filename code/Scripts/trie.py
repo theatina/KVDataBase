@@ -9,41 +9,30 @@ LT1200012
 
 '''
 
-# trie structure node module
-
-# class value_node():
-    
-#     def __init__(self, value):
-#         self.value = value
-#         self.nesting_level = -1
-#         self.next_level = None
-#         self.prev_level = None
-
+# trie structure node for key storing
 class Trie_Node():
 
     def __init__(self,character):
         self.character = character
+        
+        # previous and next characters of the current
         self.parent_node = None
         self.children_nodes = [ ]
         
+        # if node indicates end of key(word) and the respective key(whole string)
         self.end_of_word = False
         self.key = None
         
-        # if end_of_word==True, this indicates a key with the following value or nested keys
+        # if end_of_word==True, this indicates a key with the following nested keys and value
         self.nested_keys = []
         # value can be a set(empty/non-empty), string, float, int 
         self.value = None
-        # self.value_list = []
-        # self.value_type = type(self.value)
-        # dictionary with all the keypaths and their respective values
-        # self.keypath_list = []
 
-        # if top/high - level key
+        # if top - level key
         self.istop_level_key = False
 
-        # nested trie
+        # nested trie with the nested keys/values
         self.nested_trie = None
-
 
     def __del__(self):
         self.character = None
@@ -53,18 +42,17 @@ class Trie_Node():
         self.key = None
         self.nested_keys = []
         self.value = None
-        # self.value_type = None
-        self.keypath_list = []
         self.istop_level_key = False
         self.nested_trie = None
 
 
-def insert_value(trie_insert_key,new_child,value):
-    new_child.value_list.append(value)
+# def insert_value(trie_insert_key,new_child,value):
+#     new_child.value_list.append(value)
 
-    return new_child
+#     return new_child
     
 
+# sorted insertion of new character (node child)
 def insert_child(children_list,new_child):
 
     if len(children_list)==0:
@@ -74,17 +62,16 @@ def insert_child(children_list,new_child):
     pos = 0
     for position, child in enumerate(children_list):
         while new_child.character > child.character:
-            # print(position,child.character,new_child.character)
             pos+=1
             break
     
-    # print(new_child.character,pos)
     children_list.insert(pos,new_child)
     return children_list  
       
 
-# insertion of word in the trie dictionary
+# insertion of new word (key) in a trie dictionary
 def trie_insert_key(trie_dictionary, key, value, istop_level_key):
+    # for each character of the new key, the function searches the "trie_dictionary" structure. If it is found then 
     curr_node = trie_dictionary
     for letter in key:
         char_in_trie = False
@@ -97,74 +84,72 @@ def trie_insert_key(trie_dictionary, key, value, istop_level_key):
         if char_in_trie == False:
             new_child = Trie_Node(letter)
             new_child.parent_node = curr_node
-            
             curr_node.children_nodes = insert_child(curr_node.children_nodes,new_child)
-            # curr_node.children_nodes.append(new_child) 
-        
             curr_node = new_child
             
     curr_node.end_of_word = True
     curr_node.istop_level_key = istop_level_key
     curr_node.key = key
-    # insert_value(trie_dictionary,curr_node,value)
+
     return curr_node
 
-def trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value, nested_key_list):
-    curr_node = trie_dictionary
-    for letter in key:
-        char_in_trie = False
-        for child_node in curr_node.children_nodes:
-            if letter == child_node.character:
-                char_in_trie = True
-                curr_node = child_node
-                break
+# def trie_insert_keypaths(trie_dictionary, key, keypath, istop_level_key, value, nested_key_list):
+#     curr_node = trie_dictionary
+#     for letter in key:
+#         char_in_trie = False
+#         for child_node in curr_node.children_nodes:
+#             if letter == child_node.character:
+#                 char_in_trie = True
+#                 curr_node = child_node
+#                 break
         
-        if char_in_trie == False:
-            new_child = Trie_Node(letter)
-            new_child.parent_node = curr_node
+#         if char_in_trie == False:
+#             new_child = Trie_Node(letter)
+#             new_child.parent_node = curr_node
             
-            curr_node.children_nodes = insert_child(curr_node.children_nodes,new_child)
-            # curr_node.children_nodes.append(new_child) 
+#             curr_node.children_nodes = insert_child(curr_node.children_nodes,new_child)
+#             # curr_node.children_nodes.append(new_child) 
         
-            curr_node = new_child
+#             curr_node = new_child
             
-    curr_node.end_of_word = True
-    curr_node.istop_level_key = istop_level_key
-    if curr_node.key==None:
-        curr_node.key = key
-    curr_node.keypath_list.append(keypath)
-    curr_node.nested_keys.append(nested_key_list)
-    insert_value(trie_dictionary,curr_node,value)
+#     curr_node.end_of_word = True
+#     curr_node.istop_level_key = istop_level_key
+#     if curr_node.key==None:
+#         curr_node.key = key
+#     curr_node.keypath_list.append(keypath)
+#     curr_node.nested_keys.append(nested_key_list)
+#     insert_value(trie_dictionary,curr_node,value)
 
-kpath = []
-def trie_insert_entry(trie_dictionary, entry_data_dictionary, keypath):
-    global kpath
-    # print(entry_data_dictionary)
-    istop_level_key=False
-    value = None
 
-    if type(entry_data_dictionary)!=type(dict()):
-        # print(f"type:{type(entry_data_dictionary)}")
-        return entry_data_dictionary
+# kpath = []
+# def trie_insert_entry(trie_dictionary, entry_data_dictionary, keypath):
+#     global kpath
+#     # print(entry_data_dictionary)
+#     istop_level_key=False
+#     value = None
+
+#     if type(entry_data_dictionary)!=type(dict()):
+#         # print(f"type:{type(entry_data_dictionary)}")
+#         return entry_data_dictionary
     
-    for i,key in enumerate(entry_data_dictionary.keys()):
-        temp_keypath = keypath.copy()
-        temp_keypath.append(key)
-        # print(temp_keypath,key)
+#     for i,key in enumerate(entry_data_dictionary.keys()):
+#         temp_keypath = keypath.copy()
+#         temp_keypath.append(key)
+#         # print(temp_keypath,key)
         
-        value = trie_insert_entry(trie_dictionary,entry_data_dictionary[key],temp_keypath)
-        if len(temp_keypath)==1:
-            istop_level_key=True
+#         value = trie_insert_entry(trie_dictionary,entry_data_dictionary[key],temp_keypath)
+#         if len(temp_keypath)==1:
+#             istop_level_key=True
         
-        nested_key_list=[]
-        if type(entry_data_dictionary[key])==type(dict()):
-            # print(key,list(entry_data_dictionary[key].keys()))
-            nested_key_list = list(entry_data_dictionary[key].keys())
+#         nested_key_list=[]
+#         if type(entry_data_dictionary[key])==type(dict()):
+#             # print(key,list(entry_data_dictionary[key].keys()))
+#             nested_key_list = list(entry_data_dictionary[key].keys())
 
-        trie_insert_keypaths(trie_dictionary, key, temp_keypath, istop_level_key, value, nested_key_list)
-        istop_level_key=False
+#         trie_insert_keypaths(trie_dictionary, key, temp_keypath, istop_level_key, value, nested_key_list)
+#         istop_level_key=False
 
-    return None
+#     return None
 
 
 def insert_nested_trie(node, data_dict):
@@ -180,43 +165,33 @@ def insert_nested_trie(node, data_dict):
         curr_node.nested_keys.append(k)
         node = trie_insert_key(curr_node.nested_trie, k, value=None, istop_level_key=False)
         insert_nested_trie(node, data_dict[k])
-
+    
     return -1
 
 
 def nested_trie(trie_dict, data_dict):
-
     tl_key = list(data_dict.keys())[0]
-    node = trie_insert_key(trie_dict, tl_key, value=None, istop_level_key=True)
-    # print(node.key)
-    insert_nested_trie(node,data_dict[tl_key])
-    # print(node.nested_trie.children_nodes)
-    # print(node.nested_keys)
-    # print(trie_get_value_nested(node))
-    # print(trie_find_keypath_nested(trie_dict,["tl_key1","street"]))
-    
-    pass
+    found,val,node = trie_find_key(trie_dict, tl_key)
+    if found:
+        return -9
+    else:
+        node = trie_insert_key(trie_dict, tl_key, value=None, istop_level_key=True)
+        insert_nested_trie(node,data_dict[tl_key])
+    return 9
 
-    
 def data_indexing_from_file(trie_dict,filepath):
     lines = open(filepath,"r",encoding="utf-8").read().split("\n")
+    return 9
 
 def trie_get_value_nested(node):
     if node.value != None or node.value=={}:
-        # print(f"'{node.value}'")
         return node.value
 
-    # found = False
-    # new_node = None
-    # value = None
     val_dict = {}
-    # print(node.nested_trie.children_nodes,node.nested_keys)
     k_nested = node.nested_trie
     for key in node.nested_keys:
         found,value,new_node = trie_find_key(k_nested, key)
-        # print(key,new_node,value)
         val_dict[key] = trie_get_value_nested(new_node)
-        # print(key)
 
     return val_dict
 
@@ -236,7 +211,7 @@ def trie_find_keypath_nested(trie_dict,keypath_list):
                     return False,None
             else:
                 return False,None
-    # print(node.key)
+
     val_dict = trie_get_value_nested(node)
     return val_dict!=None,val_dict
 

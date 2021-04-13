@@ -11,6 +11,7 @@ from subprocess import call
 import threading
 import socket
 import customExceptions as ce 
+from collections import Counter
 
 def input_check(args):
     
@@ -115,7 +116,7 @@ def server_request(sock_list,request,server_list,k_rand_servers):
     elif (command == "GET" or command == "QUERY") and servers_down>=k_rand_servers:
         print(f"\nWARNING: {servers_down} servers are down! (Correct output is not guaranteed)")
     elif len(request_parts)<2:
-        print(f"\nERROR: '{request}': Invalid query !")
+        print(f"\nERROR: '{request}': Invalid query ! (arguments missing)")
         return -9
 
 
@@ -128,8 +129,8 @@ def server_request(sock_list,request,server_list,k_rand_servers):
             data_str = data.decode()
 
             responses.append(data_str)
-            if data_str not in ["OK"," ","NO"]:
-                break
+            # if data_str not in ["OK"," ","NO"]:
+            #     break
 
     if len(responses)==0:
         return -9
@@ -144,7 +145,13 @@ def server_request(sock_list,request,server_list,k_rand_servers):
         if len(responses)==0:
             return -9
         else:
-            print(f"\n{responses[0]}")
+            diff_responses = Counter(responses).keys()
+            if len(diff_responses)>1:
+                print(f"\n{len(diff_responses)} different entries were found:")
+                for i,entry in enumerate(diff_responses):
+                    print(f"\n{i+1}. {entry}")
+            else:
+                print(f"\n{responses[0]}")
 
     return 9
 
