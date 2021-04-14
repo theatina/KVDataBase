@@ -10,7 +10,7 @@ LT1200012
 import os
 import createData_funs as cdf
 
-print(f"\nCreating Data..\n")
+
 data_filepath = "../data/"
 keyfile_path = os.path.join(data_filepath,"keyFile.txt")
 dataToIndex_path =  os.path.join(data_filepath,"dataToIndex.txt")
@@ -18,6 +18,7 @@ namesTextFile_path =  os.path.join(data_filepath,"nameFile.txt")
 
 # Input checks
 keyfile_path,file_lines = cdf.arg_parsing(keyfile_path)
+print(f"\nCreating Data..\n")
 cdf.key_dictionaries(keyfile_path)
 
 # Creates the entry data file
