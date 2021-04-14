@@ -30,5 +30,5 @@ port = int(args.p)
 trie_server_dict = tr.Trie_Node(".")
 
 # creates a server instance and starts it
-s = sg.Server_Generator(ip,port)
+s = sg.Server_Generator(ip,port,trie_server_dict)
 s.startserver(trie_server_dict)

@@ -28,9 +28,9 @@ for th in server_threads:
     th.start()
     th.join(0.1)
     
-socket_list = kvbf.server_sock_connection(server_threads)
 # choose the buffer size of the socket data exchange over a socket (random pick just for fun)
-max_buff_size = kvbf.calculate_buff_size(data)
+max_buff_size = kvbf.calculate_buff_size(data)    
+socket_list = kvbf.server_sock_connection(server_threads,max_buff_size)
 # store the data
 kvbf.send_data(server_threads,data,total_server_num,k_rand_servers,socket_list,max_buff_size)
 # start making queries

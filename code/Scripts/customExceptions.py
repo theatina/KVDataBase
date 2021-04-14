@@ -12,3 +12,9 @@ class QueryError(Exception):
 
 class UsrInputError(Exception):
     pass
+
+class ServerError(Exception):
+    pass
+
+class SocketError(Exception):
+    pass
