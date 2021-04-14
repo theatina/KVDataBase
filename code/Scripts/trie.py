@@ -70,6 +70,7 @@ def trie_insert_key(trie_dictionary, key, value, istop_level_key):
     Insertion of new word (key) in a trie dictionary.
     For each character of the new key, the function searches the "trie_dictionary" structure. If part of it is found then the rest of the key-word is inserted after the prefix found
     '''
+    
     curr_node = trie_dictionary
     for letter in key:
         char_in_trie = False
