@@ -33,7 +33,7 @@ def PUT_query(data,trie_server_dict):
     '''
     Transforms the data row (entry) into a dictionary and calls the "nested_trie()" function to insert the entry in the trie structure of the server (database)
     '''
-    
+    # print(data)
     data_dict = json_to_dict(data)
     # nested trie
     tr.nested_trie(trie_server_dict, data_dict) 

@@ -23,15 +23,17 @@ serverFile_path,dataToIndex_path,k_rand_servers = kvbf.arg_parsing(serverFile_pa
 data = kvbf.read_file(dataToIndex_path)
 total_server_num,server_threads = kvbf.server_connection(serverFile_path)
 
-# starts the threads
+# starts the threads/servers
 for th in server_threads:
     th.start()
     th.join(0.1)
     
 socket_list = kvbf.server_sock_connection(server_threads)
-max_buff_size = kvbf.calculate_max_msg_size(data)
-# max_buff_size = 2048
+# choose the buffer size of the socket data exchange over a socket (random pick just for fun)
+max_buff_size = kvbf.calculate_buff_size(data)
+# store the data
 kvbf.send_data(server_threads,data,total_server_num,k_rand_servers,socket_list,max_buff_size)
+# start making queries
 kvbf.query_time(socket_list,server_threads,k_rand_servers,max_buff_size)
 
 

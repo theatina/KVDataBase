@@ -48,11 +48,20 @@ class Server_Generator:
                 data = conn.recv(max_buff_size)
                 data_str = data.decode()
                 max_buff_size = int(data_str)
+                # print(max_buff_size)
+                conn.sendall(b"OK")
+                conn.sendall(b"DONE")
 
                 while True:
                     # the server continues to receive queries till "exit" message is received 
                     data = conn.recv(max_buff_size)
                     data_str = data.decode()
+                    # safe way to receive data from the socket
+                    msg = "go_on"
+                    while data_str[-4:]!="DONE":
+                        data_str+= conn.recv(max_buff_size).decode()
+                    # print(data_str[-4:])
+                    data_str = data_str[:-4]
 
                     if not data:
                         break
@@ -72,8 +81,6 @@ class Server_Generator:
                         
                         if "PUT" not in data_str:
                             data_row[1] = data_row[1].strip()
-                            # data_row[1] = data_row[1].lstrip(" ")
-
                         
                         command = data_row[0].strip()
                         response = " "
@@ -92,15 +99,18 @@ class Server_Generator:
   
                         data_to_send = response.encode()
                         conn.sendall(data_to_send)
+                        conn.sendall(b"DONE")
                         
                     except ce.QueryError as err:
                         print(f"\nServer {self.ip}:{self.port} : {err.args[0]}")
                         conn.sendall(b"NO")
+                        conn.sendall(b"DONE")
                     
 
     def stop_server(self,conn):
         print(f"\n{self.ip}:{self.port} : Bye Bye world..")
         conn.sendall(b"RIP")
+        conn.sendall(b"DONE")
         conn.shutdown(socket.SHUT_RDWR)
         conn.close()
        

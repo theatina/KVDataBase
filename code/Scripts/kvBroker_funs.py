@@ -7,6 +7,7 @@ M111 - Big Data
 LT1200012
 '''
 
+import sys
 import re 
 import argparse
 import itertools
@@ -24,7 +25,7 @@ from collections import Counter
 
 def input_check(args):
     ''' 
-    
+    Performs the necessary checks on the command line arguments 
     '''
 
     try:
@@ -47,7 +48,7 @@ def input_check(args):
 
 def arg_parsing(serverFile_path,dataToIndex_path):
     ''' 
-    
+    Command line parser and checker
     '''
     
     # Command: kvBroker -s serverFile.txt -i dataToIndex.txt -k 2    
@@ -63,7 +64,7 @@ def arg_parsing(serverFile_path,dataToIndex_path):
 
 def read_file(filepath):
     ''' 
-    
+    Reads the entry data file and returns the entry rows
     '''
 
     data = open(filepath,"r",encoding="utf-8").read().strip().split("\n")
@@ -72,7 +73,7 @@ def read_file(filepath):
 
 def thread_fun(ip,port):
     ''' 
-    
+    The function that will instantiate the threads later, with the proper ip and port as arguments for each server
     '''
 
     # kvServer -a ip_address -p port
@@ -80,7 +81,7 @@ def thread_fun(ip,port):
 
 def server_connection(serverFile_path):
     ''' 
-    
+    Instantiates the threads/servers included in the "serverFile_path" file using the function "thread_fun()" above and returns a list of all the threads
     '''
 
     servers = read_file(serverFile_path)
@@ -97,12 +98,14 @@ def server_connection(serverFile_path):
 
 def server_sock_connection(server_list):
     ''' 
-    
+    Server connection establishing
     '''
 
     sock_list = []
     for i,server in enumerate(server_list):
+        # TCP protocol
         sock_list.append(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+        # establishing the connections
         sock_list[i].connect((server_list[i]._args[0], int(server_list[i]._args[1])))
 
     return sock_list
@@ -110,7 +113,7 @@ def server_sock_connection(server_list):
 
 def server_sock_connection_check(sock_list,server_list):
     ''' 
-    
+    Runs thread/socket checks and counts the servers that are down to let the Broker know and perform the proper actions
     '''
 
     servers_down = 0
@@ -125,14 +128,11 @@ def server_sock_connection_check(sock_list,server_list):
             if file_num==-1:
                 servers_down+=1
 
+
     return servers_down
 
-
-
-def server_request(sock_list,request,server_list,k_rand_servers):
-    ''' 
-    
-    '''
+def check_before_request(sock_list,request,server_list,k_rand_servers):
+    err_num = 9 #all good
 
     request = re.sub(r"\s+", " ", request)
     request_parts = request.strip().split(" ",maxsplit=1)
@@ -146,33 +146,86 @@ def server_request(sock_list,request,server_list,k_rand_servers):
     servers_down = server_sock_connection_check(sock_list,server_list)
     if len(request_parts)<2 and (any(query == command for query in ["DELETE","GET","QUERY"])==False):
         print(f"\nERROR: '{request_parts[0]}': Invalid syntax !\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
-        return -9
+        return "",[],-9
     elif len(request_parts)<2:
         print(f"\nERROR: '{request_parts[0]}': Invalid syntax ! (missing arguments)\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
-        return -9
+        return "",[],-9
     elif len(request_parts[1].split(" "))>1:
         print(f"\nERROR: '{' '.join(request_parts)}': Invalid syntax ! (too many arguments)\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
-        return -9
+        return "",[],-9
     elif servers_down==len(server_list):
         print(f"\nFATAL ERROR: All servers are down!\n({servers_down} servers)")
-        return -8
+        return "",[],-8
     elif any(query == command for query in ["DELETE","GET","QUERY"])==False:
         print(f"\nERROR: '{command}': Invalid query !\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
-        return -9
+        return "",[],-9
     elif command == "DELETE" and servers_down:
         print(f"\nCannot perform DELETE query with >=1 servers down!")
-        return -9
+        return "",[],-9
     elif (command == "GET" or command == "QUERY") and servers_down>=k_rand_servers:
         print(f"\nWARNING: {servers_down} servers are down! (Correct output is not guaranteed)")
 
+
+    return command, request_parts, err_num
+
+
+
+def server_request(sock_list,request,server_list,k_rand_servers,max_buff_size):
+    ''' 
+
+    '''
+    
+    # request = re.sub(r"\s+", " ", request)
+    # request_parts = request.strip().split(" ",maxsplit=1)
+
+    # for i,part in enumerate(request_parts):
+    #     request_parts[i] = request_parts[i].strip(" ")
+    #     request_parts[i] = request_parts[i].strip(r"\"")
+    #     request_parts[i] = request_parts[i].strip(r"'")
+    
+    # command = request_parts[0]
+    # servers_down = server_sock_connection_check(sock_list,server_list)
+    # if len(request_parts)<2 and (any(query == command for query in ["DELETE","GET","QUERY"])==False):
+    #     print(f"\nERROR: '{request_parts[0]}': Invalid syntax !\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
+    #     return -9
+    # elif len(request_parts)<2:
+    #     print(f"\nERROR: '{request_parts[0]}': Invalid syntax ! (missing arguments)\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
+    #     return -9
+    # elif len(request_parts[1].split(" "))>1:
+    #     print(f"\nERROR: '{' '.join(request_parts)}': Invalid syntax ! (too many arguments)\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
+    #     return -9
+    # elif servers_down==len(server_list):
+    #     print(f"\nFATAL ERROR: All servers are down!\n({servers_down} servers)")
+    #     return -8
+    # elif any(query == command for query in ["DELETE","GET","QUERY"])==False:
+    #     print(f"\nERROR: '{command}': Invalid query !\n\nSyntax: DELETE <top_level_key> | GET <top_level_key> | QUERY <top_level_key(.nested_key...nested_key)>")
+    #     return -9
+    # elif command == "DELETE" and servers_down:
+    #     print(f"\nCannot perform DELETE query with >=1 servers down!")
+    #     return -9
+    # elif (command == "GET" or command == "QUERY") and servers_down>=k_rand_servers:
+    #     print(f"\nWARNING: {servers_down} servers are down! (Correct output is not guaranteed)")
+
+    command, request_parts, err_num = check_before_request(sock_list,request,server_list,k_rand_servers)
+
+    if err_num!=9:
+        return err_num
 
     request_to_send = " ".join(request_parts).encode()
     responses = []
     for i,sock in enumerate(sock_list):
         if server_list[i].is_alive() and sock.fileno()!=-1:
             sock.sendall(request_to_send)
-            data = sock.recv(2048)
+            sock.sendall(b"DONE")
+
+            data = sock.recv(max_buff_size)
             data_str = data.decode()
+            # safe way to receive data from the socket
+            msg = "go_on"
+            while data_str[-4:]!="DONE":
+                data_str+= sock.recv(max_buff_size).decode()
+            # print(data_str[-4:])
+            data_str = data_str[:-4]
 
             responses.append(data_str)
             # In case we wanted to stop at the first server entry retrieval 
@@ -211,29 +264,37 @@ def server_store(sock_list,request,sock_indices,max_buff_size):
     request = request.encode()
     for sock_ind in sock_indices:
         sock_list[sock_ind].sendall(request)
+        sock_list[sock_ind].sendall(b"DONE")
         data = sock_list[sock_ind].recv(max_buff_size)
-        # data_str = data.decode()
+        data_str = data.decode()
+        # safe way to receive data from the socket
+        msg = "go_on"
+        while data_str[-4:]!="DONE":
+            data_str+= sock_list[sock_ind].recv(max_buff_size).decode()
 
 
-def calculate_max_msg_size(data):
+def calculate_buff_size(data):
     ''' 
     
     '''
-
-    max_real_size = max([len(row) for row in data])
-    diff = 2**10-max_real_size
+   
+    max_real_size = max([len(row.encode()) for row in data])
+    max_real_size_2 = max([sys.getsizeof(row.encode()) for row in data])
+    # print(max_real_size,max_real_size_2)
+    diff = 2**10-max_real_size_2
     counter = 10
     while diff<=0:
         min_diff = diff
         counter+=1
-        diff = 2**counter-max_real_size
+        diff = 2**counter-max_real_size_2
 
     p_of_2_size = 2**counter 
     
-    return p_of_2_size
+    # return p_of_2_size
+    return 2048
 
 
-def send_max_size(sock_list,server_list,max_buff_size):
+def send_buff_size(sock_list,server_list,max_buff_size):
     ''' 
     
     '''
@@ -248,8 +309,21 @@ def send_max_size(sock_list,server_list,max_buff_size):
     for i,sock in enumerate(sock_list):
         if server_list[i].is_alive() and sock.fileno()!=-1:
             sock.sendall(max_size_to_send)
-            # data = sock.recv(2048)
-            # data_str = data.decode()
+            data = sock.recv(max_buff_size)
+            data_str = data.decode()
+            # safe way to receive data from the socket
+            msg = "go_on"
+            while data_str[-4:]!="DONE":
+                data_str+= sock.recv(max_buff_size).decode()
+            # print(data_str[-4:])
+            data_str = data_str[:-4]
+
+            if "OK" not in data_str:
+                print(f"\nERROR: something went wrong with {server_list[i].getName}")
+                print(f"\n!!KILLING {server_list[i].getName}")
+                sock.sendall(b"exit")
+                sock.sendall(b"DONE")
+                
 
 
 def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_buff_size):
@@ -258,7 +332,7 @@ def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_
     '''
 
     time.sleep(1)
-    send_max_size(sock_list,server_threads,max_buff_size)
+    send_buff_size(sock_list,server_threads,max_buff_size)
     
     print(f"\nStoring Data..\n")
     for i,row in enumerate(data):
@@ -280,12 +354,21 @@ def server_exit_request(socket_list,server_list,max_buff_size):
     for i,sock in enumerate(socket_list):
         if server_list[i].is_alive() and sock.fileno()!=-1:
             sock.sendall(b"exit")
+            sock.sendall(b"DONE")
             data = sock.recv(max_buff_size)
             data_str = data.decode()
+            # safe way to receive data from the socket
+            msg = "go_on"
+            while data_str[-4:]!="DONE":
+                data_str+= sock.recv(max_buff_size).decode()
+            # print(data_str[-4:])
+            data_str = data_str[:-4]
+
             if data_str=="RIP":
                 print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} has left the chat\n")
 
     print(f"\nExiting..\n")
+
 
 def query_time(sock_list,server_list,k_rand_servers,max_buff_size):
     ''' 
@@ -293,11 +376,14 @@ def query_time(sock_list,server_list,k_rand_servers,max_buff_size):
     '''
 
     running = True
-    print(f"\nKILLING {server_list[9].getName()}")
-    sock_list[9].sendall(b"exit")
-    time.sleep(1)
-    # sock_list[1].sendall(b"exit")
-    # sock_list[2].sendall(b"exit")
+    # # testing with servers down
+    # servers_to_kill = random.randint(0,len(server_list)-1)
+    # rand_servers = random.sample(range(0,len(server_list)-1),servers_to_kill)
+    # for i in rand_servers:
+    #     print(f"\n!!KILLING {server_list[i].getName()}!!")
+    #     sock_list[i].sendall(b"exit")
+    #     sock_list[i].sendall(b"DONE")
+    #     time.sleep(0.9)
 
     while running:
         servers_down = server_sock_connection_check(sock_list,server_list)
@@ -313,7 +399,7 @@ def query_time(sock_list,server_list,k_rand_servers,max_buff_size):
             server_exit_request(sock_list,server_list,max_buff_size)
             return 9
         else:
-            err_code = server_request(sock_list,user_input,server_list,k_rand_servers)
+            err_code = server_request(sock_list,user_input,server_list,k_rand_servers,max_buff_size)
             if err_code==-8:
                 server_exit_request(sock_list,server_list,max_buff_size)
                 running = False
