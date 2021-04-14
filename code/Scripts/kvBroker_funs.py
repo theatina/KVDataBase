@@ -114,7 +114,7 @@ def server_sock_connection(server_list,max_buff_size):
                 sock_list[i].connect((server_list[i]._args[0], int(server_list[i]._args[1])))
             except socket.error as err:
                 print(f"\nERROR {err.args[0]}: Problem with socket {i} ({err.args[1]})")
-                server_exit_request_emergency(sock_list,server_list)
+                return server_exit_request_emergency(sock_list,server_list)
 
 
     return sock_list
@@ -321,7 +321,7 @@ def send_data(server_threads,data,total_server_num,k_rand_servers,sock_list,max_
     if servers_down==len(server_threads):
         print(f"\nFATAL ERROR: All servers are down !!")
         server_exit_request(sock_list,server_threads,max_buff_size)
-        exit()
+        return -19
 
     time.sleep(1)
     send_buff_size(sock_list,server_threads,max_buff_size)
@@ -359,7 +359,6 @@ def server_exit_request(socket_list,server_list,max_buff_size):
             if data_str=="RIP":
                 print(f"\nServer {sock.getpeername()[0]}:{sock.getpeername()[1]} has left the chat\n")
 
-    print(f"\nExiting..\n")
 
 
 def query_time(sock_list,server_list,k_rand_servers,max_buff_size):
@@ -396,5 +395,11 @@ def server_exit_request_emergency(sock_list,server_list):
 
     for i,sock in enumerate(sock_list):
         if server_list[i].is_alive() and sock.fileno()!=-1:
-            sock.sendall(b"#__exit__#")
-            sock.sendall(b"#__DONE__#")
+            try:
+                error1 = sock.sendall(b"#__exit__#")
+                error2 = sock.sendall(b"#__DONE__#")
+                print(error1,error2)
+            except socket.error as err:
+                print(f"\nERORR {err.args[0]}: {err.args[1]}")
+    
+    return []

@@ -31,15 +31,17 @@ for th in server_threads:
 # choose the buffer size of the socket data exchange over a socket (random pick just for fun)
 max_buff_size = kvbf.calculate_buff_size(data)    
 socket_list = kvbf.server_sock_connection(server_threads,max_buff_size)
-# store the data
-kvbf.send_data(server_threads,data,total_server_num,k_rand_servers,socket_list,max_buff_size)
-# start making queries
-kvbf.query_time(socket_list,server_threads,k_rand_servers,max_buff_size)
-
+if len(socket_list)!=0:
+    # store the data
+    err_no = kvbf.send_data(server_threads,data,total_server_num,k_rand_servers,socket_list,max_buff_size)
+    if err_no!=-19:
+        # start making queries
+        kvbf.query_time(socket_list,server_threads,k_rand_servers,max_buff_size)
 
 for th in server_threads:
     if th.is_alive():
         th.join()
-    
 
+
+print(f"\nExiting..\n")
 exit()
