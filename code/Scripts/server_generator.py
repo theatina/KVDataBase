@@ -7,6 +7,7 @@ M111 - Big Data
 LT1200012
 '''
 
+import os
 import re 
 import socket
 import threading
@@ -33,10 +34,14 @@ class Server_Generator:
             self.socket.bind((self.ip, self.port)) 
         except socket.error as err:
             print(f"\nERROR {err.args[0]}: {err.args[1]}")
+            kvsf.write_log(self.ip,self.port,f"ERROR {err.args[0]}: {err.args[1]}")
             self.kill_thread(trie_server_dict)
 
         # server data 
         self.trie_dictionary = None
+
+        os.makedirs("../LogFiles", exist_ok=True)
+
 
     def startserver(self,trie_server_dict):
         # print(f"\nServer: Hi, my ip is: {self.ip} and port: {self.port}")
@@ -48,6 +53,7 @@ class Server_Generator:
             # starts receiving data from the Broker 
             with conn:
                 print(f"Connected to {self.ip}:{self.port}")
+                kvsf.write_log(self.ip,self.port,"Connection Established")
                 # first, the Broker sends the maximum size that the server might need to receive (max size of data row), in order to avoid data loss
                 max_buff_size = 2048
                 data = conn.recv(max_buff_size)
@@ -100,14 +106,14 @@ class Server_Generator:
                         command = data_row[0].strip()
                         response = " "
                         if command == "PUT":
-                            kvsf.PUT_query(data_row[1],trie_server_dict)
+                            kvsf.PUT_query(data_row[1],trie_server_dict,self.ip,self.port)
                         elif command == "GET":
-                            response = kvsf.GET_query(data_row[1],trie_server_dict)
+                            response = kvsf.GET_query(data_row[1],trie_server_dict,self.ip,self.port)
                             response = re.sub("'", "", response)
                         elif command == "DELETE":
-                            response = kvsf.DELETE_query(data_row[1],trie_server_dict)
+                            response = kvsf.DELETE_query(data_row[1],trie_server_dict,self.ip,self.port)
                         elif command == "QUERY":
-                            response = kvsf.QUERY_query(data_row[1],trie_server_dict)
+                            response = kvsf.QUERY_query(data_row[1],trie_server_dict,self.ip,self.port)
                             response = re.sub("'", "", response)
                         else:
                             raise ce.QueryError(f"\nError: Request ' {data_str} ' is not valid\n")
@@ -118,20 +124,25 @@ class Server_Generator:
                         
                     except ce.QueryError as err:
                         print(f"\nServer {self.ip}:{self.port} : {err.args[0]}")
+                        kvsf.write_log(self.ip, self.port, f"{err.args[0]}")
                         conn.sendall(b"NO")
                         conn.sendall(b"#__DONE__#")
-                    
+
 
     def stop_server(self,conn):
         print(f"\n{self.ip}:{self.port} : Bye Bye world..")
+        kvsf.write_log(self.ip, self.port, "Connection closed")
         conn.sendall(b"RIP")
         conn.sendall(b"#__DONE__#")
-        conn.shutdown(socket.SHUT_RDWR)
-        conn.close()
+        if conn.fileno()!=-1:
+            conn.shutdown(socket.SHUT_RDWR)
+            conn.close()
        
 
     def kill_thread(self,trie_server_dict):
+        kvsf.write_log(self.ip, self.port, "Data deleted")
         tr.delete_trie(trie_server_dict)
+        kvsf.write_log(self.ip, self.port, "Server down!")
         sys.exit()
             
             
