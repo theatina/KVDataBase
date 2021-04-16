@@ -25,6 +25,7 @@ class Server_Generator:
     def __init__(self,ip,port,trie_server_dict):
         self.ip = ip
         self.port = port
+        kvsf.write_log(self.ip,self.port,"Server Up!")
         # TCP protocol
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # remedy for immidiate reuse of the port 
@@ -131,7 +132,7 @@ class Server_Generator:
 
     def stop_server(self,conn):
         print(f"\n{self.ip}:{self.port} : Bye Bye world..")
-        kvsf.write_log(self.ip, self.port, "Connection closed")
+        kvsf.write_log(self.ip, self.port, "Connection Closed")
         conn.sendall(b"RIP")
         conn.sendall(b"#__DONE__#")
         if conn.fileno()!=-1:
@@ -140,9 +141,9 @@ class Server_Generator:
        
 
     def kill_thread(self,trie_server_dict):
-        kvsf.write_log(self.ip, self.port, "Data deleted")
+        kvsf.write_log(self.ip, self.port, "Data Deleted")
         tr.delete_trie(trie_server_dict)
-        kvsf.write_log(self.ip, self.port, "Server down!")
+        kvsf.write_log(self.ip, self.port, "Server Down!")
         sys.exit()
             
             

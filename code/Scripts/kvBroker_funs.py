@@ -398,7 +398,7 @@ def server_exit_request_emergency(sock_list,server_list):
             try:
                 error1 = sock.sendall(b"#__exit__#")
                 error2 = sock.sendall(b"#__DONE__#")
-                print(error1,error2)
+                # print(error1,error2)
             except socket.error as err:
                 print(f"\nERORR {err.args[0]}: {err.args[1]}")
     
