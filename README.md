@@ -1,14 +1,14 @@
 # KVDataBase
-M111 Big Data Management Course
+### M111 Big Data Management Course
 
---> Instructions & Details <--
+#### Instructions & Details
 
 > Programming Language:
 Python (v3.8.5)
 
+<br>
 
-
-> STEP 1: Create the Data File ("data/dataToIndex.txt")
+#### STEP 1: Create the Data File ("data/dataToIndex.txt")
 
 usage: createData.py [-h] [-k K] [-n N] [-d D] [-m M] [-l L]
 
@@ -21,8 +21,9 @@ optional arguments:
   -l L        Maximum length of string value (default: 9)
 
 
+<br>
 
-> STEP 2: Start the servers - Store Data - Run Queries
+#### STEP 2: Start the servers - Store Data - Run Queries
 
 usage: kvBroker.py [-h] [-s S] [-i I] [-k K]
 
@@ -34,7 +35,9 @@ optional arguments:
 
 
 
-> STEP 3: Run Queries
+<br>
+
+#### STEP 3: Run Queries
 
 Options:
 1. DELETE <top_level_key>
@@ -42,7 +45,7 @@ Options:
 3. QUERY <top_level_key(.nested_key...nested_key)>
 4. exit 
 
-e.g. 
+<b> e.g. </b> 
 GET tlkey1
 DELETE tlkey2
 QUERY tlkey1.name.GPA
@@ -50,6 +53,7 @@ GET "tlkey3"
 DELETE 'tlkey2'
 
 
+<br> <br>
 
-> Notes
+> Note: 
 The keys can be either in quotes(double/single) or not and the separators between the command and the key/keypath can be either a single or multiple spaces/tabs
